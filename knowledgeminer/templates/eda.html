@@ -1,0 +1,65 @@
+{% if eda %}
+<h1>Bienvenido al proceso de Analisis Exploratorio de Datos</h1>
+<p>El Análisis Exploratorio de Datos  (EDA por sus siglas en ingles) es un proceso que nos permite conocer el estado de los datos que vamos a analizar.
+    Este es un proceso preliminar en cualquier proyecto de minería de datos.
+</p>
+<p>A continuación se mostrará el proceso de EDA para el dataset <b>{{file}}</b></p>
+<h3>Paso 1: Descripción de la estructura de los datos</h3>
+<p>1.- Forma (dimensiones) del DataFrame</p>
+{{eda.get_forma}}
+<p>2.- tipos de datos</p>
+<table>
+    <thead>
+        <tr>
+            <th>Columna</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  eda.get_tipo_dato.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+
+<h3>Paso 2: Identificación de datos faltantes</h3>
+<p>Enumeración de datos nulos por columna</p>
+<table>
+    <thead>
+        <tr>
+            <th>Columna</th>
+            <th>Nulos</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  eda.get_nulos.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>Información general del dataset.</p>
+<table>
+    <tr>
+        {% for col in eda.get_info.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in eda.get_info.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+{% endif %}
