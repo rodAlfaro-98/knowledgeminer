@@ -10,6 +10,7 @@ class EDA():
         self.dataset = dataset
         self.paso1 = paso1
         self.paso2 = paso2
+        self.paso3 = paso3
 
     def get_forma(self):
         return self.paso1['forma']
@@ -22,6 +23,9 @@ class EDA():
     
     def get_info(self):
         return self.paso2['info']
+    
+    def get_distribucion(self):
+        return self.paso3['distribucion']
 
 
 def descripcionEstructura(dataset):
@@ -44,9 +48,16 @@ def datosFaltantes(dataset):
     }
     return paso2
 
+def valoresAtipicos(dataset):
+    paso3 = {
+        'distribucion': dataset.hist(figsize=(14,14), xrot=45),
+    }
+    return paso3
+
 def initialization(file_path):
     dataset = pd.read_csv(file_path)
     paso1 = descripcionEstructura(dataset)
     paso2 = datosFaltantes(dataset)
-    eda = EDA(dataset,paso1,paso2,'','')
+    paso3 = valoresAtipicos(dataset)
+    eda = EDA(dataset,paso1,paso2,paso3,'')
     return eda

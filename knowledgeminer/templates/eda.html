@@ -1,4 +1,7 @@
-{% if eda %}
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
 <h1>Bienvenido al proceso de Analisis Exploratorio de Datos</h1>
 <p>El Análisis Exploratorio de Datos  (EDA por sus siglas en ingles) es un proceso que nos permite conocer el estado de los datos que vamos a analizar.
     Este es un proceso preliminar en cualquier proyecto de minería de datos.
@@ -43,6 +46,7 @@
 {% endfor %}
     </tbody>
 </table>
+<br>
 <p>Información general del dataset.</p>
 <table>
     <tr>
@@ -62,4 +66,6 @@
             </tr>
         {% endfor %}
 </table>
-{% endif %}
+<h3>Paso 3: Detección de valores atípicos</h3>
+<p>1.- Distribución de variables numéricas</p>
+{% endblock content %}
