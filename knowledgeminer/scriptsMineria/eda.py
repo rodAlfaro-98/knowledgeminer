@@ -3,6 +3,7 @@ import numpy as np                # Para crear vectores y matrices n dimensional
 import matplotlib.pyplot as plt   # Para la generación de gráficas a partir de los datos
 import seaborn as sns             # Para la visualización de datos basado en matplotlib
 import io
+import urllib, base64
 
 class EDA():
 
@@ -49,8 +50,14 @@ def datosFaltantes(dataset):
     return paso2
 
 def valoresAtipicos(dataset):
+    dataset.hist(figsize=(14,14), xrot=45)
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    string = base64.b64encode(buf.read())
+    uri = urllib.parse.quote(string)
     paso3 = {
-        'distribucion': dataset.hist(figsize=(14,14), xrot=45),
+        'distribucion': uri,
     }
     return paso3
 
