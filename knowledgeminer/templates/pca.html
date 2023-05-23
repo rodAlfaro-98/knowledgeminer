@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>Bienvenido al proceso de Análisis de Componentes Principales</h1>
+<p>El Análisis de Componentes Principales (PCA por sus siglas en ingles) es un algoritmo para reducir la cantidad de variables de conjuntos, mientras se conserva la mayor cantidad de información posible.
+</p>
+<p>A continuación se mostrará el proceso de PCA para el dataset <b>{{file}}</b></p>
+<h3>Paso 1: Evidencia de variables posiblemente correlacionadas.</h3>
+<h3>Paso 2: Se hace una estandarización de los datos.</h3>
+<h3>Pasos 3 y 4: Se calcula la matriz de covarianzas o correlaciones, y se calculan los componentes (eigen-vectores) y la varianza (eigen-valores).</h3>
+{% endblock content %}
