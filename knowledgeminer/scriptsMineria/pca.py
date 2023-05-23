@@ -8,20 +8,35 @@ import urllib, base64
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler, MinMaxScaler 
 
-class PCA():
-	def __init__(self, dataset, paso1,paso2):
+class PCAA():
+	def __init__(self, dataset, paso1,paso2,paso34,paso5,paso6):
 		self.dataset = dataset
 		self.paso1 = paso1
 		self.paso2 = paso2
-		#self.paso34 = paso34
-		#self.paso5 = paso5
-		#self.paso6 = paso6
+		self.paso34 = paso34
+		self.paso5 = paso5
+		self.paso6 = paso6
 
 	def get_correlacion(self):
 		return self.paso1['correlacion']
 
 	def get_estandarizacion(self):
 		return self.paso2['estandarizacion']
+
+	def get_matriz(self):
+		return self.paso34['matriz']
+
+	def get_proporcion(self):
+		return self.paso5['proporcion']
+
+	def get_acumulada(self):
+		return self.paso5['acumulada']
+
+	def get_grafica(self):
+		return self.paso5['grafica']
+
+	def get_cargasCom(self):
+		return self.paso6['cargasCom']
 
 
 def varCorrelacionadas(dataset):
@@ -49,9 +64,47 @@ def estandarizacionDatos(dataset):
 	}
 	return paso2
 
+def matrizCovCorr(dataset):
+	Estand = StandardScaler()
+	MEstand = Estand.fit_transform(dataset)
+	pca = PCA(n_components=10)
+	pca.fit(MEstand)
+	paso34 = {
+		'matriz': pca.components_,
+	}
+	return paso34
+
+def componentesPrincipales(dataset):
+	Estand = StandardScaler()
+	MEstand = Estand.fit_transform(dataset)
+	pca = PCA(n_components=10)
+	pca.fit(MEstand)
+
+	varianza = pca.explained_variance_ratio_
+	paso5 = {
+		'proporcion': varianza,
+		'acumulada':varianza[0:6].sum(),
+	}
+	return paso5
+
+def cargas(dataset):
+	Estand = StandardScaler()
+	MEstand = Estand.fit_transform(dataset)
+	pca = PCA(n_components=10)
+	pca.fit(MEstand)
+
+	CargasComponentes = pd.DataFrame(abs(pca.components_), columns=dataset.columns)
+	paso6 = {
+		'cargasCom': CargasComponentes,
+	}
+	return paso6
+
 def initialization(file_path):
 	dataset = pd.read_csv(file_path)
 	paso1 = varCorrelacionadas(dataset)
 	paso2 = estandarizacionDatos(dataset)
-	pca = PCA(dataset,paso1,paso2)
+	paso34 = matrizCovCorr(dataset)
+	paso5 = componentesPrincipales(dataset)
+	paso6 = cargas(dataset)
+	pca = PCAA(dataset,paso1,paso2,paso34,paso5,paso6)
 	return pca		
