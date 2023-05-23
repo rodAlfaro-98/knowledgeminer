@@ -154,4 +154,27 @@
 {{ad.get_exactitud}}
 <p>&nbsp</p>
 {{ad.get_reporte}}
+<h3>Eficiencia y conformación del modelo de clasificación.</h3>
+<table border cellpadding=10 cellspacing=0 width="10%">
+    <tr>
+        {% for col in ad.get_impMod.columns %}
+            <th>
+            {{col}}
+            </th>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_impMod.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<p>&nbsp</p>
+<img src="data:image/png;base64, {{ad.get_arbol}}", alt="", height="600", width="900">
+<p>&nbsp</p>
+
 {% endblock content %}
