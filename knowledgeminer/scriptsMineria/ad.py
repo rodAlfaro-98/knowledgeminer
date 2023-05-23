@@ -10,6 +10,8 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import plot_tree
+from sklearn.tree import export_text
 
 class AD():
 	def __init__(self,dataset,paso1,paso2,paso3,paso4,paso5,paso6,paso7):
@@ -72,6 +74,15 @@ class AD():
 
 	def get_reporte(self):
 		return self.paso6['reporte']
+
+	def get_impMod(self):
+		return self.paso7['impMod']
+
+	def get_arbol(self):
+		return self.paso7['arbol']
+
+	def get_rep(self):
+		return self.paso7['rep']
 
 
 def accesoDatos(dataset):
@@ -175,6 +186,48 @@ def matrizClasificacion(dataset):
 	}
 	return paso6
 
+def eficonfMod(dataset):
+	ImportanciaMod1 = pd.DataFrame({'Variable': list(dataset[['Pregnancies',
+                                                           'Glucose',
+                                                           'BloodPressure',
+                                                           'SkinThickness',
+                                                           'Insulin',
+                                                           'BMI',
+                                                           'DiabetesPedigreeFunction',
+                                                           'Age']]),
+                                'Importancia': ClasificacionAD.feature_importances_}).sort_values('Importancia', ascending=False)
+
+	plt.figure(figsize=(16,16))
+	plot_tree(ClasificacionAD, feature_names = ['Pregnancies', 
+                                            'Glucose', 
+                                            'BloodPressure', 
+                                            'SkinThickness', 
+                                            'Insulin', 
+                                            'BMI', 
+                                            'DiabetesPedigreeFunction',
+                                            'Age'])
+	buf1 = io.BytesIO()
+	plt.savefig(buf1,format='png')
+	buf1.seek(0)
+	string = base64.b64encode(buf1.read())
+	uri1 = urllib.parse.quote(string)
+
+	Reporte = export_text(ClasificacionAD, feature_names = ['Pregnancies', 
+                                                        'Glucose', 
+                                                        'BloodPressure', 
+                                                        'SkinThickness', 
+                                                        'Insulin', 
+                                                        'BMI', 
+                                                        'DiabetesPedigreeFunction',
+                                                        'Age'])
+
+	paso7 ={
+		'impMod': ImportanciaMod1,
+		'arbol': uri1,
+		'rep': Reporte,
+	}
+	return paso7
+
 def initialization(file_path):
     dataset = pd.read_csv(file_path)
     paso1 = accesoDatos(dataset)
@@ -183,5 +236,6 @@ def initialization(file_path):
     paso4 = creacionMod(dataset)
     paso5 = modeloAd(dataset)
     paso6 = matrizClasificacion(dataset)
-    ad = AD(dataset,paso1,paso2,paso3,paso4,paso5,paso6,'')
+    paso7 = eficonfMod(dataset)
+    ad = AD(dataset,paso1,paso2,paso3,paso4,paso5,paso6,paso7)
     return ad
