@@ -56,6 +56,9 @@ def varCorrelacionadas(dataset):
 	return paso1
 
 def estandarizacionDatos(dataset):
+	global Estand
+	global MEstand
+
 	Estand = StandardScaler()
 	MEstand = Estand.fit_transform(dataset)
 	df = pd.DataFrame(MEstand, columns=dataset.columns)
@@ -65,8 +68,8 @@ def estandarizacionDatos(dataset):
 	return paso2
 
 def matrizCovCorr(dataset):
-	Estand = StandardScaler()
-	MEstand = Estand.fit_transform(dataset)
+	global pca
+
 	pca = PCA(n_components=10)
 	pca.fit(MEstand)
 	paso34 = {
@@ -75,9 +78,6 @@ def matrizCovCorr(dataset):
 	return paso34
 
 def componentesPrincipales(dataset):
-	Estand = StandardScaler()
-	MEstand = Estand.fit_transform(dataset)
-	pca = PCA(n_components=10)
 	pca.fit(MEstand)
 
 	varianza = pca.explained_variance_ratio_
@@ -88,9 +88,6 @@ def componentesPrincipales(dataset):
 	return paso5
 
 def cargas(dataset):
-	Estand = StandardScaler()
-	MEstand = Estand.fit_transform(dataset)
-	pca = PCA(n_components=10)
 	pca.fit(MEstand)
 
 	CargasComponentes = pd.DataFrame(abs(pca.components_), columns=dataset.columns)
@@ -107,4 +104,4 @@ def initialization(file_path):
 	paso5 = componentesPrincipales(dataset)
 	paso6 = cargas(dataset)
 	pca = PCAA(dataset,paso1,paso2,paso34,paso5,paso6)
-	return pca		
+	return pca
