@@ -1,3 +1,22 @@
+<style>
+    div.scroll {
+        margin: 4px, 4px;
+        padding: 4px;
+        width: 75%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    div.scrolly {
+        margin:4px, 4px;
+        padding:4px;
+        width: 75%;
+        height: 400px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+</style>
+
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -10,52 +29,76 @@
 <img src="data:image/png;base64, {{pca.get_correlacion}}", alt="", height="600", width="900">
 <h3>Paso 2: Se hace una estandarización de los datos.</h3>
 <center>
-<table border cellpadding=10 cellspacing=0 width="10%">
-    <tr>
-        {% for col in pca.get_estandarizacion.columns %}
-            <th>
-            {{col}}
-            </th>
-        {% endfor %}
-    </tr>
-        {% for index, row in pca.get_estandarizacion.iterrows %}
+<div class="scroll">
+    <div class="scrolly">
+        <table border cellpadding=10 cellspacing=0 width="10%">
             <tr>
-            {% for cell in row %}
-                <td>
-                {{cell}}
-                </td>
-            {% endfor %}
+                {% for col in pca.get_estandarizacion.columns %}
+                    <th>
+                    {{col}}
+                    </th>
+                {% endfor %}
             </tr>
-        {% endfor %}
-</table>
+                {% for index, row in pca.get_estandarizacion.iterrows %}
+                    <tr>
+                    {% for cell in row %}
+                        <td>
+                        {{cell}}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+        </table>
+    </div>
+</div>
 </center>
 <h3>Pasos 3 y 4: Se calcula la matriz de covarianzas o correlaciones, y se calculan los componentes (eigen-vectores) y la varianza (eigen-valores).</h3>
-{{pca.get_matriz}}
+<center>
+    <div class="scroll">
+        <table>
+            <tbody>
+                {% for i in pca.get_matriz %}
+                    <tr>
+                        {% for j in i %}
+                            <td>{{j}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</center>
 <h3>Paso 5: Se decide el número de componentes principales.</h3>
 <p>Proporción de varianza:</p>
-{{pca.get_proporcion}}
+<ul>
+    {% for i in pca.get_proporcion %}
+        <li>{{i}}</li>
+    {% endfor %}
+</ul>
 <p>Varianza acumulada:</p>
 {{pca.get_acumulada}}
 <h3>Paso 6: Se examina la proporción de relevancias –cargas–.</h3>
 <p>Cargas componentes:</p>
 <center>
-<table border cellpadding=10 cellspacing=0 width="10%">
-    <tr>
-        {% for col in pca.get_cargasCom.columns %}
-            <th>
-            {{col}}
-            </th>
-        {% endfor %}
-    </tr>
-        {% for index, row in pca.get_cargasCom.iterrows %}
-            <tr>
-            {% for cell in row %}
-                <td>
-                {{cell}}
-                </td>
+<div class="scroll">
+    <table border cellpadding=10 cellspacing=0 width="10%">
+        <tr>
+            {% for col in pca.get_cargasCom.columns %}
+                <th>
+                {{col}}
+                </th>
             {% endfor %}
-            </tr>
-        {% endfor %}
-</table>
+        </tr>
+            {% for index, row in pca.get_cargasCom.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+</div>
 </center>
 {% endblock content %}

@@ -13,7 +13,7 @@ def say_hello(request):
     return render(request=request,template_name='hello.html',context=context)
 
 def eda_prueba(request):
-    file_name = 'C:/Users/offue/Downloads/country_vaccinations.csv'
+    file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas\practica1/assets/country_vaccinations.csv'
     eda = EDA.initialization(file_name)
     context = {
         'eda': eda,
@@ -30,7 +30,7 @@ def ba_prueba(request):
     }
     return render(request = request, template_name='ba.html', context = context)
 def pca_prueba(request):
-    file_name = 'C:/Users/offue/Downloads/Hipoteca.csv'
+    file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas/practica4/assets/Hipoteca.csv'
     pca = PCAA.initialization(file_name)
     context = {
         'pca': pca,
@@ -39,7 +39,7 @@ def pca_prueba(request):
     return render(request = request, template_name = 'pca.html', context = context)
 
 def ad_prueba(request):
-    file_name = 'C:/Users/offue/Downloads/diabetes.csv'
+    file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas/practica13/Datos/diabetes.csv'
     ad = AD.initialization(file_name)
     context = {
         'ad': ad,

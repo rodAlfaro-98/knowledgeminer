@@ -100,9 +100,9 @@ def selCaracteristcas(dataset):
 	sns.heatmap(dataset.corr(), cmap='RdBu_r', annot=True, mask=Matriz)
 	buf = io.BytesIO()
 	plt.savefig(buf,format='png')
-	buf.seek(0)
 	string = base64.b64encode(buf.read())
 	uri = urllib.parse.quote(string)
+	buf.seek(0)
 	paso2 = {
 		'selCar': uri,
 	}

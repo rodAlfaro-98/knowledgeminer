@@ -1,3 +1,21 @@
+<style>
+    div.scroll {
+        margin: 4px, 4px;
+        padding: 4px;
+        width: 75%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    div.scrolly {
+        margin:4px, 4px;
+        padding:4px;
+        width: 75%;
+        height: 400px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+</style>
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -64,44 +82,46 @@
 <img src="data:image/png;base64, {{ad.get_selCar}}", alt="", height="600", width="900">
 <h3>Paso 3: Definición de las variables predictoras y variable clase.</h3>
 <p>Variables preditorias:</p>
-<table border cellpadding=10 cellspacing=0 width="10%">
-    <tr>
-        {% for col in ad.get_varPred.columns %}
-            <th>
-            {{col}}
-            </th>
-        {% endfor %}
-    </tr>
-        {% for index, row in ad.get_varPred.iterrows %}
-            <tr>
-            {% for cell in row %}
-                <td>
-                {{cell}}
-                </td>
+<div class="scrolly">
+    <table border cellpadding=10 cellspacing=0 width="10%">
+        <tr>
+            {% for col in ad.get_varPred.columns %}
+                <th>
+                {{col}}
+                </th>
             {% endfor %}
-            </tr>
-        {% endfor %}
-</table>
+        </tr>
+            {% for index, row in ad.get_varPred.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+</div>
 <p>&nbsp</p>
 <p>Variables clase:</p>
-<table border cellpadding=10 cellspacing=0 width="10%">
-    <tr>
-        {% for col in ad.get_varClas.columns %}
+<div class="scrolly">
+    <table border cellpadding=10 cellspacing=0 width="10%">
+        <tr>
             <th>
-            {{col}}
+                Etiquetado
             </th>
-        {% endfor %}
-    </tr>
-        {% for index, row in ad.get_varClas.iterrows %}
-            <tr>
-            {% for cell in row %}
-                <td>
-                {{cell}}
-                </td>
+        </tr>
+            {% for index, row in ad.get_varClas.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
             {% endfor %}
-            </tr>
-        {% endfor %}
-</table>
+    </table>
+</div>
 <h3>Pasaremos a la creación del modelo, en este caso será el modelo AD.</h3>
 {{ad.get_xTrain}}
 <p>&nbsp</p>
@@ -112,24 +132,28 @@
 <p>Clasificación final.</p>
 {{ad.get_yclasif}}
 <p>&nbsp</p>
-<table border cellpadding=10 cellspacing=0 width="10%">
-    <tr>
-        {% for col in ad.get_valM.columns %}
-            <th>
-            {{col}}
-            </th>
-        {% endfor %}
-    </tr>
-        {% for index, row in ad.get_valM.iterrows %}
+<div class="scrolly">
+    <table border cellpadding=10 cellspacing=0 width="10%">
+        <thead>
             <tr>
-            {% for cell in row %}
-                <td>
-                {{cell}}
-                </td>
-            {% endfor %}
+                <th>
+                    Predicción
+                </th>
             </tr>
-        {% endfor %}
-</table>
+        </thead>
+        <tbody>
+            {% for index, row in ad.get_valM.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 <p>&nbsp</p>
 {{ad.get_resultado}}
 <h3>Matriz de Clasificación.</h3>
