@@ -1,3 +1,24 @@
+<style>
+    div.scroll {
+        margin: 4px, 4px;
+        padding: 4px;
+        width: 50%;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+
+    div.scrolly {
+                margin:4px, 4px;
+                padding:4px;
+                width: 700px;
+                height: 700px;
+                overflow-x: hidden;
+                overflow-y: auto;
+                text-align:justify;
+    }
+</style>
+
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -69,4 +90,120 @@
 <h3>Paso 3: Detección de valores atípicos</h3>
 <p>1.- Distribución de variables numéricas</p>
 <img src="data:image/png;base64, {{eda.get_distribucion}}", alt="", height="800", width="800">
+<p>2) Resumen estadístico de variables numéricas</p>
+<div class="scroll">
+<table>
+    <tr>
+        <td><b>Valor estadístico</b></td>
+        {% for col in eda.get_resumen.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in eda.get_resumen.iterrows %}
+            <tr>
+                <td><b>{{index}}</b></td>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+</div>
+<br>
+<p>3) Diagramas para detectar posibles valores atípicos</p>
+<div class = "scrolly">
+    {% for graph in eda.get_diagramas_atipicos %}
+        <img src="data:image/png;base64, {{graph}}", alt="", height="600", width="600">
+        <br>
+    {% endfor %}
+</div>
+<br>
+<p>4) Distribución de variables categóricas</p>
+<p>Tabla de distribución</p>
+<table>
+    <tr>
+        <td><b>Valor estadístico</b></td>
+        {% for col in eda.get_categoricas_df.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in eda.get_categoricas_df.iterrows %}
+            <tr>
+                <td><b>{{index}}</b></td>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<br>
+<p>Gráficas de distribución.</p>
+<p>Para evitar gráficas con demasiados datos se mostrarán únicamente las columnas con 10 o menos tipos de categorías</p>
+<div class = "scrolly">
+    {% for graph in eda.get_categoricas %}
+        <img src="data:image/png;base64, {{graph}}", alt="", height="600", width="600">
+        <br>
+    {% endfor %}
+</div>
+<p>5) Agrupación por variables categóricas</p>
+<div class="scroll">
+    {% for dataframe in eda.get_agrupacion%}
+    <table>
+        <tr>
+            <td><b>Valor estadístico</b></td>
+            {% for col in dataframe.columns %}
+                <td>{{col.0}} <b>{{col.1}}</b></td>
+            {% endfor %}
+        </tr>
+            {% for index, row in dataframe.iterrows %}
+                <tr>
+                    <td><b>{{index}}</b></td>
+                {% for cell in row %}
+                    <td>
+                        {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+    <br>
+    <br>
+    {% endfor %}
+</div>
+<h3>Paso 4: Identificación de relaciones entre pares variables</h3>
+<p>Tabla de correlación de valores</p>
+<div class="scroll">
+<table>
+    <tr>
+        <td><b>Valor estadístico</b></td>
+        {% for col in eda.get_corr.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in eda.get_corr.iterrows %}
+            <tr>
+                <td><b>{{index}}</b></td>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+</div>
+<p>Gráfica de correlación de valores</p>
+<img src="data:image/png;base64, {{eda.get_corr_graph}}", alt="", height="600", width="800">
+<p>Gráfica de correlación de valores inferior</p>
+<img src="data:image/png;base64, {{eda.get_corr_inf}}", alt="", height="600", width="800">
 {% endblock content %}
