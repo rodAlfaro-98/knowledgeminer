@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>Bienvenido al modelo de Árboles de Desición.</h1>
+<p>Los Árboles de Desición (AD) permiten resolver problemas de regresión (pronostico) y clasificación.
+</p>
+<p>A continuación se mostrará el modelo de AD para el dataset <b>{{file}}</b></p>
+<h3>Paso 1: Acceso a los datos.</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Columna</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  ad.get_datos.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>&nbsp</p>
+<p>Outcome:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Resultados</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  ad.get_datos1.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>&nbsp</p>
+<table border cellpadding=10 cellspacing=0 width="10%">
+    <tr>
+        {% for col in ad.get_datos2.columns %}
+            <th>
+            {{col}}
+            </th>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_datos2.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<h3>Paso 2: Selección de características.</h3>
+<img src="data:image/png;base64, {{ad.get_selCar}}", alt="", height="600", width="900">
+<h3>Paso 3: Definición de las variables predictoras y variable clase.</h3>
+<p>Variables preditorias:</p>
+<table border cellpadding=10 cellspacing=0 width="10%">
+    <tr>
+        {% for col in ad.get_varPred.columns %}
+            <th>
+            {{col}}
+            </th>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_varPred.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<p>&nbsp</p>
+<p>Variables clase:</p>
+<table border cellpadding=10 cellspacing=0 width="10%">
+    <tr>
+        {% for col in ad.get_varClas.columns %}
+            <th>
+            {{col}}
+            </th>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_varClas.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<h3>Pasaremos a la creación del modelo, en este caso será el modelo AD.</h3>
+{{ad.get_xTrain}}
+<p>&nbsp</p>
+{{ad.get_xVal}}
+<h3>Modelo Árboles de Desiciones.</h3>
+<p>Clasificación AD.</p>
+{{ad.get_clasif}}
+<p>Clasificación final.</p>
+{{ad.get_yclasif}}
+<p>&nbsp</p>
+<table border cellpadding=10 cellspacing=0 width="10%">
+    <tr>
+        {% for col in ad.get_valM.columns %}
+            <th>
+            {{col}}
+            </th>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_valM.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<p>&nbsp</p>
+{{ad.get_resultado}}
+<h3>Matriz de Clasificación.</h3>
+<table border cellpadding=10 cellspacing=0 width="10%">
+    <tbody>
+{% for index, item in  ad.get_mClasif.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>&nbsp</p>
+<p>Criterio:</p>
+{{ad.get_criterio}}
+<p>&nbsp</p>
+<p>Importancia variables:</p>
+{{ad.get_impVar}}
+<p>&nbsp</p>
+<p>Exactitud:</p>
+{{ad.get_exactitud}}
+<p>&nbsp</p>
+{{ad.get_reporte}}
+<h3>Eficiencia y conformación del modelo de clasificación.</h3>
+<table border cellpadding=10 cellspacing=0 width="10%">
+    <tr>
+        {% for col in ad.get_impMod.columns %}
+            <th>
+            {{col}}
+            </th>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_impMod.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<p>&nbsp</p>
+<img src="data:image/png;base64, {{ad.get_arbol}}", alt="", height="600", width="900">
+<p>&nbsp</p>
+
+{% endblock content %}
