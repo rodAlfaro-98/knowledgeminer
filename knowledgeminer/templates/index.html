@@ -1,0 +1,35 @@
+<script>
+    function defaultSelected(){
+        var archivo = document.getElementsByName("archivos")[0].value;
+        var defaultVar = document.getElementsByName('archivos_default')[0];
+        if(archivo == "default"){
+            alert('default');
+            defaultVar.style.visibility='visible';
+        }else{
+            defaultVar.style.visibility='hidden';
+        }
+    }
+</script>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1>Bienvenido {{username}}</h1>
+    {% if files|length > 0 %}
+        <h3>Sus archivos son los siguientes:</h3>
+        <select name="archivos" onchange="defaultSelected()">
+            {% for i in files %}
+                <option value="{{i}}">{{i}}</option>
+            {% endfor %}
+            <option value="default">default</option>
+        </select>
+        <br>
+        <br>
+        <select name="archivos_default" style="visibility: hidden">
+            <option value="diabetes.csv">diabetes</option>
+            <option value="songs.csv">songs</option>
+            <option value="survey lung cancer.csv">surve long cancer</option>
+        </select>
+    {% else %}
+        <h3>No cuenta con archivos guardados en el sistema</h3>
+    {% endif %}
+{% endblock content %}

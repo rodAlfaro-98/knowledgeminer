@@ -9,22 +9,37 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
+from .models import File
+import os
 
-def handle_uploaded_file(f):  
-    with open('./knowledgeminer/UserFiles/default/'+f.name, 'wb+') as destination:  
+def handle_uploaded_file(f,current_user):  
+    path = "./knowledgeminer/UserFiles/"+current_user.username
+    if not os.path.exists("./knowledgeminer/UserFiles/"+current_user.username):
+        directory = current_user.username
+        parent_dir = "./knowledgeminer/UserFiles/"
+        path = os.path.join(parent_dir,directory)
+        os.mkdir(path)
+    with open('./knowledgeminer/UserFiles/'+current_user.username+'/'+f.name, 'wb+') as destination:  
         for chunk in f.chunks():
             destination.write(chunk)  
+    file = File(user=current_user,name = f.name,path = './knowledgeminer/UserFiles/'+current_user.username+'/'+f.name)
+    file.save()
+
 # Create your views here.
 def insert_file(request):
-    context = {}
-    if request.POST:
-        form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            handle_uploaded_file(request.FILES["archivo"])
+    if request.user.is_authenticated:
+        context = {}
+        if request.POST:
+            form = UploadFileForm(request.POST, request.FILES)
+            if form.is_valid():
+                handle_uploaded_file(request.FILES["archivo"],request.user)
+        else:
+            form = UploadFileForm()
+        context['form'] = form
+        return render(request, "data_insert.html", context)
     else:
-        form = UploadFileForm()
-    context['form'] = form
-    return render(request, "data_insert.html", context)
+        form = AuthenticationForm()
+        return render(request=request, template_name="login.html", context={"login_form":form})
 
 def eda_prueba(request):
     file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas\practica1/assets/country_vaccinations.csv'
@@ -90,3 +105,19 @@ def login_request(request):
 			messages.error(request,"Invalid username or password.")
 	form = AuthenticationForm()
 	return render(request=request, template_name="login.html", context={"login_form":form})
+
+def index(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+        files = File.objects.filter(user = current_user)
+        names_files = []
+        for file in files:
+             names_files.append(file.name)
+        context = {
+            'files': names_files,
+            'username': current_user.username,
+        }
+        return render(request=request, template_name='index.html',context = context)
+    else:
+        form = AuthenticationForm()
+        return render(request=request, template_name="login.html", context={"login_form":form})

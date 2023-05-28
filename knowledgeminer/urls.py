@@ -5,6 +5,7 @@ app_name = "knowledgeminer"
 
 #URLConf
 urlpatterns = [
+    path('', views.index, name='index'),
     path('ba/', views.ba_prueba, name="ba"),
     path('eda/',views.eda_prueba , name="eda"),
     path('pca/',views.pca_prueba, name="pca"),
