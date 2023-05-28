@@ -12,17 +12,18 @@ from django.contrib.auth import login, authenticate
 from .models import File
 import os
 
+def create_user_dir(username):
+    directory = username
+    parent_dir = "./knowledgeminer/UserFiles/"
+    path = os.path.join(parent_dir,directory)
+    os.mkdir(path)
+
 def handle_uploaded_file(f,current_user):  
-    path = "./knowledgeminer/UserFiles/"+current_user.username
-    if not os.path.exists("./knowledgeminer/UserFiles/"+current_user.username):
-        directory = current_user.username
-        parent_dir = "./knowledgeminer/UserFiles/"
-        path = os.path.join(parent_dir,directory)
-        os.mkdir(path)
-    with open('./knowledgeminer/UserFiles/'+current_user.username+'/'+f.name, 'wb+') as destination:  
+    path = "./knowledgeminer/UserFiles/"+current_user.username+"/"
+    with open(path+f.name, 'wb+') as destination:  
         for chunk in f.chunks():
             destination.write(chunk)  
-    file = File(user=current_user,name = f.name,path = './knowledgeminer/UserFiles/'+current_user.username+'/'+f.name)
+    file = File(user=current_user,name = f.name,path =path+f.name)
     file.save()
 
 # Create your views here.
@@ -33,10 +34,11 @@ def insert_file(request):
             form = UploadFileForm(request.POST, request.FILES)
             if form.is_valid():
                 handle_uploaded_file(request.FILES["archivo"],request.user)
+                return redirect("knowledgeminer:index")
         else:
             form = UploadFileForm()
         context['form'] = form
-        return render(request, "data_insert.html", context)
+        return render(request=request, context=context, template_name='data_insert.html')
     else:
         form = AuthenticationForm()
         return render(request=request, template_name="login.html", context={"login_form":form})
@@ -77,16 +79,19 @@ def ad_prueba(request):
     return render(request = request, template_name = 'ad.html', context = context)
 
 def register_request(request):
-	if request.method == "POST":
-		form = NewUserForm(request.POST)
-		if form.is_valid():
-			user = form.save()
-			login(request, user)
-			messages.success(request, "Registration successful." )
-			return redirect("knowledgeminer:input")
-		messages.error(request, "Unsuccessful registration. Invalid information.")
-	form = NewUserForm()
-	return render (request=request, template_name="register.html", context={"register_form":form})
+    if request.method == "POST":
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            create_user_dir(user.username)
+            messages.success(request, "Registration successful." )
+            return redirect("knowledgeminer:index")
+        else:
+            messages.error(request, "Unsuccessful registration. Invalid information.")
+    else:
+        form = NewUserForm()
+        return render (request=request, template_name="register.html", context={"register_form":form})
 
 def login_request(request):
 	if request.method == "POST":
@@ -98,7 +103,7 @@ def login_request(request):
 			if user is not None:
 				login(request, user)
 				messages.info(request, f"You are now logged in as {username}.")
-				return redirect("knowledgeminer:input")
+				return redirect("knowledgeminer:index")
 			else:
 				messages.error(request,"Invalid username or password.")
 		else:
@@ -112,7 +117,7 @@ def index(request):
         files = File.objects.filter(user = current_user)
         names_files = []
         for file in files:
-             names_files.append(file.name)
+            names_files.append(file.name)
         context = {
             'files': names_files,
             'username': current_user.username,
