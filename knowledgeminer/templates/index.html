@@ -1,15 +1,3 @@
-<script>
-    function defaultSelected(){
-        var archivo = document.getElementsByName("archivos")[0].value;
-        var defaultVar = document.getElementsByName('archivos_default')[0];
-        if(archivo == "default"){
-            alert('default');
-            defaultVar.style.visibility='visible';
-        }else{
-            defaultVar.style.visibility='hidden';
-        }
-    }
-</script>
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -53,8 +41,9 @@
         </select>
         <br>
         <br>
-        <input type="submit" value="Enviar">
+        <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
-    <h4>Si desea guardar un nuevo archivo favor de acceder al siguiente link</h4>
+    <br>
+    <h5>Si desea guardar un nuevo archivo favor de acceder al siguiente link</h5>
     <a href="{% url 'knowledgeminer:input' %}">Ingresar nuevo dataset</a>
 {% endblock content %}

@@ -137,7 +137,7 @@ def seleccion(request):
     if request.POST['archivos'] != 'default':
         archivo = "./knowledgeminer/UserFiles/"+current_user.username+"/"+request.POST['archivos']
     else:
-        archivo = "./knowledgeminer/UserFiles/default"+request.POST['archivos_default']
+        archivo = "./knowledgeminer/UserFiles/default/"+request.POST['archivos_default']
     request.session['archivo'] = archivo
     algoritmo = request.POST['algoritmo']
     if algoritmo == 'eda' :

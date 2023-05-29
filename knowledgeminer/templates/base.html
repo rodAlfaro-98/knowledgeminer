@@ -7,11 +7,119 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
         <title>Report App | {% block title %} {% endblock title %}</title>
+        <script src="{% static 'js/user.js' %}"></script>
+         <!-- Custom fonts for this template-->
+        <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+        <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+        <!-- Custom styles for this template-->
+        <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
     </head>
-    <body>
-        <div class="container mb-3 mt-3">
-            {% block content %}
-            {% endblock content %}
+    <body id="page-top">
+        <div id="wrapper">
+            <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar">
+
+                <!-- Sidebar - Brand -->
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                    <div class="sidebar-brand-text mx-3">Knowledgeminer</div>
+                </a>
+    
+                <!-- Divider -->
+                <hr class="sidebar-divider my-0">
+    
+                <!-- Nav Item - Dashboard -->
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'knowledgeminer:index' %}">
+                        <i class="fas fa-fw fa-house-user"></i>
+                        <span>Home</span></a>
+                </li>
+    
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+    
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Acciones
+                </div>
+    
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'knowledgeminer:input' %}"
+                        aria-expanded="true" aria-controls="collapseTwo">
+                        <i class="fas fa-fw fa-file"></i>
+                        <span>Subir Archivo</span>
+                    </a>
+                </li>
+    
+                <!-- Nav Item - Utilities Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#"
+                        aria-expanded="true" aria-controls="collapseUtilities">
+                        <i class="fas fa-fw fa-download"></i>
+                        <span>Exportar</span>
+                    </a>
+                </li>
+    
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+    
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Algoritmos
+                </div>
+    
+                <!-- Nav Item - Pages Collapse Menu -->
+                <li class="nav-item">
+                    <a class="nav-link collapsed" href="{% url 'knowledgeminer:eda' %}"
+                        aria-expanded="true" aria-controls="collapsePages">
+                        <i class="fas fa-fw fa-signal"></i>
+                        <span>EDA</span>
+                    </a>
+                </li>
+    
+                <!-- Nav Item - Charts -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'knowledgeminer:pca' %}">
+                        <i class="fas fa-fw fa-chart-area"></i>
+                        <span>PCA</span></a>
+                </li>
+    
+                <!-- Nav Item - Tables -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'knowledgeminer:ad' %}">
+                        <i class="fas fa-fw fa-tree"></i>
+                        <span>Árboles</span></a>
+                </li>
+    
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'knowledgeminer:ba' %}">
+                        <i class="fas fa-fw fa-list"></i>
+                        <span>Bosques</span></a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <i class="fas fa-fw fa-layer-group"></i>
+                        <span>Clustering</span></a>
+                </li>
+
+                <!-- Divider -->
+                <hr class="sidebar-divider d-none d-md-block">
+    
+                <!-- Sidebar Toggler (Sidebar) -->
+                <div class="text-center d-none d-md-inline">
+                    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </div>
+    
+            </ul>
+            <!-- End of Sidebar -->
+            <div class="container mb-3 mt-3" style="padding-left: 10%;">
+                {% block content %}
+                {% endblock content %}
+            </div>
         </div>
     </body>
 </html>
