@@ -44,37 +44,41 @@ def insert_file(request):
         return render(request=request, template_name="login.html", context={"login_form":form})
 
 def eda_prueba(request):
-    file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas\practica1/assets/country_vaccinations.csv'
+    file_name = request.session['archivo']
+    file = file_name.split('/')[len(file_name.split('/'))-1]
     eda = EDA.initialization(file_name)
     context = {
         'eda': eda,
-        'file': file_name,
+        'file': file,
     }
     return render(request = request, template_name='eda.html', context = context)
 
 def ba_prueba(request):
-    file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas/practica13/Datos/diabetes.csv'
+    file_name = request.session['archivo']
     ba = BA.initialization(file_name,'Outcome')
+    file = file_name.split('/')[len(file_name.split('/'))-1]
     context = {
         'ba': ba,
-        'file': file_name,
+        'file': file,
     }
     return render(request = request, template_name='ba.html', context = context)
 def pca_prueba(request):
-    file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas/practica4/assets/Hipoteca.csv'
+    file_name = request.session['archivo']
+    file = file_name.split('/')[len(file_name.split('/'))-1]
     pca = PCAA.initialization(file_name)
     context = {
         'pca': pca,
-        'file': file_name,
+        'file': file,
     }
     return render(request = request, template_name = 'pca.html', context = context)
 
 def ad_prueba(request):
-    file_name = 'E:/Windows/FI/carrera/DecimoSemestre/Mineria/practicas/practica13/Datos/diabetes.csv'
+    file_name = request.session['archivo']
+    file = file_name.split('/')[len(file_name.split('/'))-1]
     ad = AD.initialization(file_name)
     context = {
         'ad': ad,
-        'file': file_name,
+        'file': file,
     }
     return render(request = request, template_name = 'ad.html', context = context)
 
@@ -126,3 +130,24 @@ def index(request):
     else:
         form = AuthenticationForm()
         return render(request=request, template_name="login.html", context={"login_form":form})
+    
+def seleccion(request):
+    archivo = ''
+    current_user = request.user
+    if request.POST['archivos'] != 'default':
+        archivo = "./knowledgeminer/UserFiles/"+current_user.username+"/"+request.POST['archivos']
+    else:
+        archivo = "./knowledgeminer/UserFiles/default"+request.POST['archivos_default']
+    request.session['archivo'] = archivo
+    algoritmo = request.POST['algoritmo']
+    if algoritmo == 'eda' :
+        return redirect("knowledgeminer:eda")
+    elif algoritmo == 'pca':
+        return redirect("knowledgeminer:pca")
+    elif algoritmo == 'ad':
+        return redirect("knowledgeminer:ad")
+    elif algoritmo == 'ba':
+        return redirect("knowledgeminer:ba")
+    else:
+        messages.error(request,"Favor de elegir un archivo y algoritmo")
+        return redirect("knowledgeminer:index")

@@ -13,4 +13,5 @@ urlpatterns = [
     path('input/',views.insert_file, name="input"),
     path('register/', views.register_request,name = "register"),
     path('login/', views.login_request, name='login'),
+    path('seleccion/', views.seleccion, name='seleccion'),
 ]

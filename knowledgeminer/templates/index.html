@@ -14,22 +14,47 @@
 {% load static %}
 {% block content %}
     <h1>Bienvenido {{username}}</h1>
-    {% if files|length > 0 %}
-        <h3>Sus archivos son los siguientes:</h3>
-        <select name="archivos" onchange="defaultSelected()">
-            {% for i in files %}
-                <option value="{{i}}">{{i}}</option>
-            {% endfor %}
-            <option value="default">default</option>
+    <form action="seleccion/" method="post">
+        {% csrf_token %}
+        {% if files|length > 0 %}
+            <h3>Sus archivos son los siguientes:</h3>
+            <select name="archivos" id="archivos" onchange="defaultSelected()">
+                <option name="none" selected="selected">Seleccione archivo</option>
+                {% for i in files %}
+                    <option value="{{i}}">{{i}}</option>
+                {% endfor %}
+                <option value="default">default</option>
+            </select>
+            <br>
+            <br>
+            <select name="archivos_default" id="archivos_default" style="visibility: hidden">
+                <option name="none" selected="selected">Seleccione archivo precargado</option>
+                <option value="diabetes.csv">diabetes</option>
+                <option value="songs.csv">songs</option>
+                <option value="survey lung cancer.csv">surve long cancer</option>
+            </select>
+        {% else %}
+            <h3>No cuenta con archivos guardados en el sistema</h3>
+            <select name="usuario_default" id="usuario_default">
+                <option name="none" selected="selected">Seleccione archivo precargado</option>
+                <option value="diabetes.csv">diabetes</option>
+                <option value="songs.csv">songs</option>
+                <option value="survey lung cancer.csv">surve long cancer</option>
+            </select>
+        {% endif %}
+        <br>
+        <h3>Los algoritmos cargados son los siguientes:</h3>
+        <select name="algoritmo" id="algoritmo">
+            <option name="none" selected="selected">Seleccione algoritmo</option>
+            <option value="eda">Análisis exploratorio de Datos</option>
+            <option value="pca">Análisis de Componentes Principales</option>
+            <option value="ad">Árboles de decisión</option>
+            <option value="ba">Bosques Aleatorios</option>
         </select>
         <br>
         <br>
-        <select name="archivos_default" style="visibility: hidden">
-            <option value="diabetes.csv">diabetes</option>
-            <option value="songs.csv">songs</option>
-            <option value="survey lung cancer.csv">surve long cancer</option>
-        </select>
-    {% else %}
-        <h3>No cuenta con archivos guardados en el sistema</h3>
-    {% endif %}
+        <input type="submit" value="Enviar">
+    </form>
+    <h4>Si desea guardar un nuevo archivo favor de acceder al siguiente link</h4>
+    <a href="{% url 'knowledgeminer:input' %}">Ingresar nuevo dataset</a>
 {% endblock content %}
