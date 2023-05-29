@@ -2,7 +2,6 @@
     div.scroll {
         margin: 4px, 4px;
         padding: 4px;
-        width: 50%;
         overflow-x: auto;
         overflow-y: hidden;
         white-space: nowrap;
@@ -11,11 +10,14 @@
     div.scrolly {
                 margin:4px, 4px;
                 padding:4px;
-                width: 700px;
                 height: 700px;
                 overflow-x: hidden;
                 overflow-y: auto;
                 text-align:justify;
+    }
+    table {
+        border-collapse: separate; 
+        border-spacing: 5px;
     }
 </style>
 
@@ -32,7 +34,7 @@
 <p>1.- Forma (dimensiones) del DataFrame</p>
 {{eda.get_forma}}
 <p>2.- tipos de datos</p>
-<table>
+<table class="table">
     <thead>
         <tr>
             <th>Columna</th>
@@ -51,7 +53,7 @@
 
 <h3>Paso 2: Identificación de datos faltantes</h3>
 <p>Enumeración de datos nulos por columna</p>
-<table>
+<table class="table">
     <thead>
         <tr>
             <th>Columna</th>
@@ -69,15 +71,14 @@
 </table>
 <br>
 <p>Información general del dataset.</p>
-<table>
+<table class="table">
     <tr>
-        {% for col in eda.get_info.columns %}
-            <td>
-            {{col}}
-            </td>
-        {% endfor %}
+        <th>#</th>
+        <th>Column</th>
+        <th>Non-null Count</th>
+        <th>Dtype</th>
     </tr>
-        {% for index, row in eda.get_info.iterrows %}
+        {% for row in eda.get_info%}
             <tr>
             {% for cell in row %}
                 <td>
@@ -92,7 +93,7 @@
 <img src="data:image/png;base64, {{eda.get_distribucion}}", alt="", height="800", width="800">
 <p>2) Resumen estadístico de variables numéricas</p>
 <div class="scroll">
-<table>
+<table class="table">
     <tr>
         <td><b>Valor estadístico</b></td>
         {% for col in eda.get_resumen.columns %}
@@ -122,66 +123,78 @@
     {% endfor %}
 </div>
 <br>
-<p>4) Distribución de variables categóricas</p>
-<p>Tabla de distribución</p>
-<table>
-    <tr>
-        <td><b>Valor estadístico</b></td>
-        {% for col in eda.get_categoricas_df.columns %}
-            <td>
-            {{col}}
-            </td>
-        {% endfor %}
-    </tr>
-        {% for index, row in eda.get_categoricas_df.iterrows %}
+{% if  eda.get_categoricas != 0%}
+    <p>4) Distribución de variables categóricas</p>
+    <p>Tabla de distribución</p>
+    {% if  eda.get_categoricas != 0%}
+        <table class="table">
             <tr>
-                <td><b>{{index}}</b></td>
-            {% for cell in row %}
-                <td>
-                    {{cell}}
-                </td>
-            {% endfor %}
-            </tr>
-        {% endfor %}
-</table>
-<br>
-<p>Gráficas de distribución.</p>
-<p>Para evitar gráficas con demasiados datos se mostrarán únicamente las columnas con 10 o menos tipos de categorías</p>
-<div class = "scrolly">
-    {% for graph in eda.get_categoricas %}
-        <img src="data:image/png;base64, {{graph}}", alt="", height="600", width="600">
-        <br>
-    {% endfor %}
-</div>
-<p>5) Agrupación por variables categóricas</p>
-<div class="scroll">
-    {% for dataframe in eda.get_agrupacion%}
-    <table>
-        <tr>
-            <td><b>Valor estadístico</b></td>
-            {% for col in dataframe.columns %}
-                <td>{{col.0}} <b>{{col.1}}</b></td>
-            {% endfor %}
-        </tr>
-            {% for index, row in dataframe.iterrows %}
-                <tr>
-                    <td><b>{{index}}</b></td>
-                {% for cell in row %}
+                <td><b>Valor estadístico</b></td>
+                {% for col in eda.get_categoricas_df.columns %}
                     <td>
-                        {{cell}}
+                    {{col}}
                     </td>
                 {% endfor %}
-                </tr>
+            </tr>
+                {% for index, row in eda.get_categoricas_df.iterrows %}
+                    <tr>
+                        <td><b>{{index}}</b></td>
+                    {% for cell in row %}
+                        <td>
+                            {{cell}}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+        </table>
+    {% else %}
+        <p>Su dataset no cuenta con varaibles categóricas</p>
+    {% endif %}
+    <br>
+    <p>Gráficas de distribución.</p>
+    <p>Para evitar gráficas con demasiados datos se mostrarán únicamente las columnas con 10 o menos tipos de categorías</p>
+    {% if eda.get_categoricas > 0 %}
+        <div class = "scrolly">
+            {% for graph in eda.get_categoricas %}
+                <img src="data:image/png;base64, {{graph}}", alt="", height="600", width="600">
+                <br>
             {% endfor %}
-    </table>
-    <br>
-    <br>
-    {% endfor %}
-</div>
+        </div>
+    {% else %}
+        {% if eda.get_categoricas == -1 or eda.get_categprocas == 0 %}
+            <p>Sus variables categóricas cuentan con demasiados valores únicos, por lo cual las gráficas no son visibles</p>
+        {% endif %}
+    {% endif %}
+    <p>5) Agrupación por variables categóricas</p>
+    <div class="scroll">
+        {% for dataframe in eda.get_agrupacion%}
+        <table class="table">
+            <tr>
+                <td><b>Valor estadístico</b></td>
+                {% for col in dataframe.columns %}
+                    <td>{{col.0}} <b>{{col.1}}</b></td>
+                {% endfor %}
+            </tr>
+                {% for index, row in dataframe.iterrows %}
+                    <tr>
+                        <td><b>{{index}}</b></td>
+                    {% for cell in row %}
+                        <td>
+                            {{cell}}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+        </table>
+        <br>
+        <br>
+        {% endfor %}
+    </div>
+{% endif %}
 <h3>Paso 4: Identificación de relaciones entre pares variables</h3>
 <p>Tabla de correlación de valores</p>
 <div class="scroll">
-<table>
+<table class="table">
     <tr>
         <td><b>Valor estadístico</b></td>
         {% for col in eda.get_corr.columns %}

@@ -63,13 +63,32 @@ def descripcionEstructura(dataset):
 def datosFaltantes(dataset):
     buffer = io.StringIO()
     dataset.info(buf=buffer)
-    lines = buffer.getvalue().splitlines()
-    df = (pd.DataFrame([x.split() for x in lines[5:-2]], columns=lines[3].split())
-       .drop('Count',axis=1)
-       .rename(columns={'Non-Null':'Non-Null Count'}))
+    lines = buffer.getvalue().splitlines()[5:-2]
+    info = [x.split(' ') for x in lines]
+    info_new = []
+    for i in info:
+        line = []
+        for j in i:
+            if len(j) >= 1:
+                line.append(j)
+        info_new.append(line)
+    first_info = []
+    for i in info_new:
+        line = []
+        line.append(i[0]) #index
+        #Find non-null
+        non_null_index = i.index('non-null')
+        non_null_index_minus = non_null_index-1
+        string = ''
+        for j in i[1:non_null_index_minus]:
+            string+=j+' '
+        line.append(string)
+        line.append(i[non_null_index_minus]+' '+i[non_null_index])
+        line.append(i[non_null_index+1])
+        first_info.append(line)
     paso2 = {
         'nulos':dataset.isnull().sum(),
-        'info':df
+        'info':first_info,
     }
     return paso2
 
@@ -96,6 +115,7 @@ def valoresAtipicos(dataset):
     #Obtención de histograma de valores atípicos
     cols_atipicas = get_outliers(dataset)
     graphs = []
+    print("Entrand a paso 3.1")
     for col in cols_atipicas:
         plt.clf()
         sns.boxplot(data=dataset[col],orient='h').set_title(col)
@@ -105,7 +125,7 @@ def valoresAtipicos(dataset):
         string = base64.b64encode(buf.read())
         uri = urllib.parse.quote(string)
         graphs.append(uri)
-
+    print("Entrand a paso 3.2")
     #Variables categóricas
     graphs_cat = []
     for col in dataset.select_dtypes(include='object'):
@@ -118,19 +138,25 @@ def valoresAtipicos(dataset):
             string = base64.b64encode(buf.read())
             uri = urllib.parse.quote(string)
             graphs_cat.append(uri)
-    
+    print("Entrand a paso 3.3")
     # Agrupación por variables categóricas
     agrupacion = []
+    print(len(dataset.select_dtypes(include='object')))
     for col in dataset.select_dtypes(include='object'):
         if dataset[col].nunique() < 10:
         #Obtenemos la mediana de cada columna agregado por una sola columna.
             agrupacion.append(dataset.groupby(col).agg(['mean']))
+    categoria_df = 0
+    try:
+        categoria_df = dataset.describe(include='object')
+    except:
+        categoria_df = 0
     paso3 = {
         'distribucion': uri,
         'descripcion': dataset.describe(),
         'atipicos': graphs,
-        'categoricas_df': dataset.describe(include='object'),
-        'categoricas': graphs_cat,
+        'categoricas_df': categoria_df,
+        'categoricas': graphs_cat if len(graphs_cat) > 0 else -1 if len(graphs_cat) > 0 and len(categoria_df) > 0 else 0,
         'agrupacion': agrupacion,
     }
     return paso3
@@ -164,9 +190,14 @@ def relaciones_variables(dataset):
 
 def initialization(file_path):
     dataset = pd.read_csv(file_path)
+    dataset = dataset.iloc[0:500000]
+    print("Entrando a paso 1")
     paso1 = descripcionEstructura(dataset)
+    print("Entrando a paso 2")
     paso2 = datosFaltantes(dataset)
+    print("Entrando a paso 3")
     paso3 = valoresAtipicos(dataset)
+    print("Entrando a paso 4")
     paso4 = relaciones_variables(dataset)
     eda = EDA(dataset,paso1,paso2,paso3,paso4)
     return eda
