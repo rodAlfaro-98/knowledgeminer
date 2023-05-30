@@ -9,7 +9,7 @@
             <select name="archivos" id="archivos" onchange="defaultSelected()">
                 <option name="none" selected="selected">Seleccione archivo</option>
                 {% for i in files %}
-                    <option value="{{i}}">{{i}}</option>
+                    <option value="{{i.name}}">{{i.name}}</option>
                 {% endfor %}
                 <option value="default">default</option>
             </select>
@@ -32,13 +32,25 @@
         {% endif %}
         <br>
         <h3>Los algoritmos cargados son los siguientes:</h3>
-        <select name="algoritmo" id="algoritmo">
+        <select name="algoritmo" id="algoritmo" onchange="selectedAlgorithm()">
             <option name="none" selected="selected">Seleccione algoritmo</option>
             <option value="eda">Análisis exploratorio de Datos</option>
             <option value="pca">Análisis de Componentes Principales</option>
             <option value="ad">Árboles de decisión</option>
             <option value="ba">Bosques Aleatorios</option>
         </select>
+        <br>
+        <br>
+        {% if files|length > 0 %}
+            {% for i in files %}
+                <p>Columnas del archivo {{i.name}}</p>
+                <select id="{{i.name}}" name="{{i.name}}" style="visibility: hidden">
+                    {% for x in i.get_columns %}
+                        <option value={{x}}>{{x}}</option>
+                    {% endfor %}
+                </select>
+            {% endfor %}
+        {% endif %}
         <br>
         <br>
         <button type="submit" class="btn btn-primary">Enviar</button>

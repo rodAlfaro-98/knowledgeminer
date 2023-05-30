@@ -11,6 +11,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate
 from .models import File
 import os
+import pandas as pd
 
 def create_user_dir(username):
     directory = username
@@ -23,7 +24,8 @@ def handle_uploaded_file(f,current_user):
     with open(path+f.name, 'wb+') as destination:  
         for chunk in f.chunks():
             destination.write(chunk)  
-    file = File(user=current_user,name = f.name,path =path+f.name)
+    df = pd.read_csv(path+f.name)
+    file = File(user=current_user,name = f.name,path =path+f.name, columns = list(df.columns) )
     file.save()
 
 # Create your views here.
@@ -93,6 +95,8 @@ def register_request(request):
             return redirect("knowledgeminer:index")
         else:
             messages.error(request, "Unsuccessful registration. Invalid information.")
+            return render (request=request, template_name="register.html", context={"register_form":form})
+
     else:
         form = NewUserForm()
         return render (request=request, template_name="register.html", context={"register_form":form})
@@ -123,7 +127,8 @@ def index(request):
         for file in files:
             names_files.append(file.name)
         context = {
-            'files': names_files,
+            'names': names_files,
+            'files': files,
             'username': current_user.username,
         }
         return render(request=request, template_name='index.html',context = context)
@@ -134,10 +139,13 @@ def index(request):
 def seleccion(request):
     archivo = ''
     current_user = request.user
-    if request.POST['archivos'] != 'default':
-        archivo = "./knowledgeminer/UserFiles/"+current_user.username+"/"+request.POST['archivos']
+    if 'archivos' in request.POST:
+        if request.POST['archivos'] != 'default':
+            archivo = "./knowledgeminer/UserFiles/"+current_user.username+"/"+request.POST['archivos']
+        else:
+            archivo = "./knowledgeminer/UserFiles/default/"+request.POST['archivos_default']
     else:
-        archivo = "./knowledgeminer/UserFiles/default/"+request.POST['archivos_default']
+        archivo = "./knowledgeminer/UserFiles/default/"+request.POST['usuario_default']
     request.session['archivo'] = archivo
     algoritmo = request.POST['algoritmo']
     if algoritmo == 'eda' :
