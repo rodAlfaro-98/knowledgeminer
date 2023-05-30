@@ -79,7 +79,7 @@ class BA():
 
 def separacion(dataset,dependiente):
     y = np.array(dataset[[dependiente]])
-    columnas = dataset.columns.tolist()
+    columnas = dataset.select_dtypes(include=['float64','int64']).columns.tolist()
     columnas.remove(dependiente)
     x = np.array(dataset[columnas])
     return [x,y,columnas]

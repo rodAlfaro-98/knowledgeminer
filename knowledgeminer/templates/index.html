@@ -42,13 +42,16 @@
         <br>
         <br>
         {% if files|length > 0 %}
+            <h3>Elija su variable dependiente para realizar el análisis</h3>
             {% for i in files %}
-                <p>Columnas del archivo {{i.name}}</p>
-                <select id="{{i.name}}" name="{{i.name}}" style="visibility: hidden">
-                    {% for x in i.get_columns %}
-                        <option value={{x}}>{{x}}</option>
-                    {% endfor %}
-                </select>
+                <div id="{{i.name}}" style="visibility: hidden">
+                    <p>Columnas del archivo {{i.name}}</p>
+                    <select name="{{i.name}}">
+                        {% for x in i.get_columns %}
+                            <option value={{x}}>{{x}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             {% endfor %}
         {% endif %}
         <br>

@@ -57,7 +57,7 @@ def eda_prueba(request):
 
 def ba_prueba(request):
     file_name = request.session['archivo']
-    ba = BA.initialization(file_name,'Outcome')
+    ba = BA.initialization(file_name,request.session['var_dep'])
     file = file_name.split('/')[len(file_name.split('/'))-1]
     context = {
         'ba': ba,
@@ -153,8 +153,14 @@ def seleccion(request):
     elif algoritmo == 'pca':
         return redirect("knowledgeminer:pca")
     elif algoritmo == 'ad':
+        if request.POST['archivos'] != 'default':
+            var_dep = request.POST[request.POST['archivos']]
+            request.session['var_dep'] = var_dep
         return redirect("knowledgeminer:ad")
     elif algoritmo == 'ba':
+        if request.POST['archivos'] != 'default':
+            var_dep = request.POST[request.POST['archivos']]
+            request.session['var_dep'] = var_dep
         return redirect("knowledgeminer:ba")
     else:
         messages.error(request,"Favor de elegir un archivo y algoritmo")
