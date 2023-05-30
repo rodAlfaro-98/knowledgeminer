@@ -108,21 +108,16 @@ def selCaracteristcas(dataset):
 	}
 	return paso2
 
-def definicionVar(dataset):
+def definicionVar(dataset,dependiente):
 	global X 
 	global Y
 	
-	X = np.array(dataset[['Pregnancies', 
-                       'Glucose', 
-                       'BloodPressure', 
-                       'SkinThickness', 
-                       'Insulin', 
-                       'BMI',
-                       'DiabetesPedigreeFunction',
-                       'Age']])
+	columnas = dataset.select_dtypes(include=['float64','int64']).columns.tolist()
+	columnas.remove(dependiente)
+	X = np.array(dataset[columnas])
 	superX = pd.DataFrame(X)
 
-	Y = np.array(dataset[['Outcome']])
+	Y = np.array(dataset[[dependiente]])
 	superY = pd.DataFrame(Y)
 	paso3 = {
 		'varPred': superX,
@@ -186,40 +181,21 @@ def matrizClasificacion(dataset):
 	}
 	return paso6
 
-def eficonfMod(dataset):
-	ImportanciaMod1 = pd.DataFrame({'Variable': list(dataset[['Pregnancies',
-                                                           'Glucose',
-                                                           'BloodPressure',
-                                                           'SkinThickness',
-                                                           'Insulin',
-                                                           'BMI',
-                                                           'DiabetesPedigreeFunction',
-                                                           'Age']]),
+def eficonfMod(dataset,dependiente):
+	columnas = dataset.select_dtypes(include=['float64','int64']).columns.tolist()
+	columnas.remove(dependiente)
+	ImportanciaMod1 = pd.DataFrame({'Variable': list(dataset[columnas]),
                                 'Importancia': ClasificacionAD.feature_importances_}).sort_values('Importancia', ascending=False)
 
 	plt.figure(figsize=(16,16))
-	plot_tree(ClasificacionAD, feature_names = ['Pregnancies', 
-                                            'Glucose', 
-                                            'BloodPressure', 
-                                            'SkinThickness', 
-                                            'Insulin', 
-                                            'BMI', 
-                                            'DiabetesPedigreeFunction',
-                                            'Age'])
+	plot_tree(ClasificacionAD, feature_names = columnas)
 	buf1 = io.BytesIO()
 	plt.savefig(buf1,format='png')
 	buf1.seek(0)
 	string = base64.b64encode(buf1.read())
 	uri1 = urllib.parse.quote(string)
 
-	Reporte = export_text(ClasificacionAD, feature_names = ['Pregnancies', 
-                                                        'Glucose', 
-                                                        'BloodPressure', 
-                                                        'SkinThickness', 
-                                                        'Insulin', 
-                                                        'BMI', 
-                                                        'DiabetesPedigreeFunction',
-                                                        'Age'])
+	Reporte = export_text(ClasificacionAD, feature_names = columnas)
 
 	paso7 ={
 		'impMod': ImportanciaMod1,
@@ -228,14 +204,14 @@ def eficonfMod(dataset):
 	}
 	return paso7
 
-def initialization(file_path):
+def initialization(file_path,dependiente):
     dataset = pd.read_csv(file_path)
     paso1 = accesoDatos(dataset)
     paso2 = selCaracteristcas(dataset)
-    paso3 = definicionVar(dataset)
+    paso3 = definicionVar(dataset,dependiente)
     paso4 = creacionMod(dataset)
     paso5 = modeloAd(dataset)
     paso6 = matrizClasificacion(dataset)
-    paso7 = eficonfMod(dataset)
+    paso7 = eficonfMod(dataset,dependiente)
     ad = AD(dataset,paso1,paso2,paso3,paso4,paso5,paso6,paso7)
     return ad

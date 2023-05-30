@@ -77,7 +77,7 @@ def pca_prueba(request):
 def ad_prueba(request):
     file_name = request.session['archivo']
     file = file_name.split('/')[len(file_name.split('/'))-1]
-    ad = AD.initialization(file_name)
+    ad = AD.initialization(file_name,request.session['var_dep'])
     context = {
         'ad': ad,
         'file': file,
