@@ -70,7 +70,7 @@ def estandarizacionDatos(dataset):
 def matrizCovCorr(dataset):
 	global pca
 
-	pca = PCA(n_components=10)
+	pca = PCA(0.85)
 	pca.fit(MEstand)
 	paso34 = {
 		'matriz': pca.components_,
@@ -98,6 +98,8 @@ def cargas(dataset):
 
 def initialization(file_path):
 	dataset = pd.read_csv(file_path)
+	dataset = dataset.iloc[0:500000]
+	dataset = dataset.select_dtypes(include=['float64','int64'])
 	paso1 = varCorrelacionadas(dataset)
 	paso2 = estandarizacionDatos(dataset)
 	paso34 = matrizCovCorr(dataset)

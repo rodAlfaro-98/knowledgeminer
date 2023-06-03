@@ -85,8 +85,8 @@ class AD():
 		return self.paso7['rep']
 
 
-def accesoDatos(dataset):
-	dat = dataset.groupby('Outcome').size()
+def accesoDatos(dataset,dependiente):
+	dat = dataset.groupby(dependiente).size()
 	paso1 = {
 		'datos': dataset.dtypes,
 		'datos1': dat,
@@ -95,14 +95,15 @@ def accesoDatos(dataset):
 	return paso1
 
 def selCaracteristcas(dataset):
-	plt.figure(figsize=(14,7))
+	plt.clf()
 	Matriz = np.triu(dataset.corr())
 	sns.heatmap(dataset.corr(), cmap='RdBu_r', annot=True, mask=Matriz)
 	buf = io.BytesIO()
 	plt.savefig(buf,format='png')
+	buf.seek(0)
 	string = base64.b64encode(buf.read())
 	uri = urllib.parse.quote(string)
-	buf.seek(0)
+	buf.truncate(0)
 	paso2 = {
 		'selCar': uri,
 	}
@@ -113,7 +114,8 @@ def definicionVar(dataset,dependiente):
 	global Y
 	
 	columnas = dataset.select_dtypes(include=['float64','int64']).columns.tolist()
-	columnas.remove(dependiente)
+	if(dependiente in columnas):
+		columnas.remove(dependiente)
 	X = np.array(dataset[columnas])
 	superX = pd.DataFrame(X)
 
@@ -183,7 +185,8 @@ def matrizClasificacion(dataset):
 
 def eficonfMod(dataset,dependiente):
 	columnas = dataset.select_dtypes(include=['float64','int64']).columns.tolist()
-	columnas.remove(dependiente)
+	if dependiente in columnas:
+		columnas.remove(dependiente)
 	ImportanciaMod1 = pd.DataFrame({'Variable': list(dataset[columnas]),
                                 'Importancia': ClasificacionAD.feature_importances_}).sort_values('Importancia', ascending=False)
 
@@ -206,7 +209,8 @@ def eficonfMod(dataset,dependiente):
 
 def initialization(file_path,dependiente):
     dataset = pd.read_csv(file_path)
-    paso1 = accesoDatos(dataset)
+    dataset = dataset.iloc[0:500000]
+    paso1 = accesoDatos(dataset,dependiente)
     paso2 = selCaracteristcas(dataset)
     paso3 = definicionVar(dataset,dependiente)
     paso4 = creacionMod(dataset)

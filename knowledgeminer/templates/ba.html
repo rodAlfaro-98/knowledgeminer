@@ -39,7 +39,7 @@
 <p>El dataframe es el siguiente:</p>
 <div class="scrolly">
 <div class="scroll">
-    <table>
+    <table class="table">
         <tr>
             <td><b>Índice</b></td>
             {% for col in ba.get_indep_vars.1.columns %}
@@ -66,7 +66,7 @@
 </ul>
 <p>El dataframe es el siguiente:</p>
 <div class="scrolly">
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Index</th>
@@ -104,7 +104,7 @@
 {{ba.train}}
 <p>Ya teniendo el bosque podemos entrenarlo. Para esto utilizaremos el método <i>.predict</i>. La salida de la predicción de nuestro árbol es la siguiente:</p>
 <div class="scrolly">
-    <table>
+    <table class="table">
         <thead>
             <tr>
                 <th>Index</th>
@@ -123,7 +123,7 @@
 </div>
 <p>A continuación podemos comparar uno a uno las salidas de la predicción con nuestros datos de validación</p>
 <div class="scrolly">
-    <table>
+    <table class="table">
         <tr>
             <td><b>Real</b></td>
             <td>Obtenido</td>
@@ -154,7 +154,7 @@
     <li>Falsos Negativos</li>
 </ul>
 <p>La diagonal principal nos muestra los valores que fueron correctamente clasificados</p>
-<table style="width: 50%">
+<table class="table" style="width: 50%">
     <tr>
         <td></td>
         {% for col in ba.get_matriz_clasificacion.columns %}
@@ -175,7 +175,7 @@
         {% endfor %}
 </table>
 <p>Igualmente podemos ver un desglose de los distintos criterios de evaluación de nuestro modelo</p>
-<table style="width: 80%">
+<table class="table" style="width: 80%">
     <thead>
         <tr>
             <td>Criterio</td>

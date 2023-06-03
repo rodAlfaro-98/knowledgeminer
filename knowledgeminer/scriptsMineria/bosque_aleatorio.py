@@ -41,7 +41,10 @@ class BA():
     def get_var_graphs(self):
         plt.clf()
         numtype = self.dataset.describe(include=['float64','int64']).columns
-        plt.scatter(self.dataset[numtype[2]], self.dataset[numtype[1]], c = self.dataset[self.dependiente])
+        c = self.dataset[self.dependiente]
+        if self.dependiente not in numtype:
+            c = [ i for i in range(len(c.tolist()))]
+        plt.scatter(self.dataset[numtype[2]], self.dataset[numtype[1]], c = c)
         plt.grid()
         plt.xlabel(numtype[2])
         plt.ylabel(numtype[1])
@@ -80,7 +83,8 @@ class BA():
 def separacion(dataset,dependiente):
     y = np.array(dataset[[dependiente]])
     columnas = dataset.select_dtypes(include=['float64','int64']).columns.tolist()
-    columnas.remove(dependiente)
+    if dependiente in columnas:
+        columnas.remove(dependiente)
     x = np.array(dataset[columnas])
     return [x,y,columnas]
 

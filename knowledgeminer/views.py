@@ -139,14 +139,26 @@ def index(request):
 def seleccion(request):
     archivo = ''
     current_user = request.user
+    path = ''
+    nombre_archivo = ''
     if 'archivos' in request.POST:
         if request.POST['archivos'] != 'default':
             archivo = "./knowledgeminer/UserFiles/"+current_user.username+"/"+request.POST['archivos']
+            path = "./knowledgeminer/UserFiles/"+current_user.username+"/"
+            nombre_archivo = request.POST['archivos']
         else:
             archivo = "./knowledgeminer/UserFiles/default/"+request.POST['archivos_default']
+            path = "./knowledgeminer/UserFiles/default/"
+            nombre_archivo = request.POST['archivos_default']
     else:
         archivo = "./knowledgeminer/UserFiles/default/"+request.POST['usuario_default']
+        path = "./knowledgeminer/UserFiles/default/"
+        nombre_archivo = request.POST['usuario_default']
     request.session['archivo'] = archivo
+    request.session['path'] = path
+    request.session['nombre_archivo'] = nombre_archivo
+    if 'var_dep' in request.session:
+        del request.session['var_dep']
     algoritmo = request.POST['algoritmo']
     if algoritmo == 'eda' :
         return redirect("knowledgeminer:eda")
@@ -165,3 +177,48 @@ def seleccion(request):
     else:
         messages.error(request,"Favor de elegir un archivo y algoritmo")
         return redirect("knowledgeminer:index")
+    
+def exportar(request):
+    if request.user.is_authenticated:
+        context = {}
+        if request.POST:
+            form = UploadFileForm(request.POST, request.FILES)
+            if form.is_valid():
+                handle_uploaded_file(request.FILES["archivo"],request.user)
+                return redirect("knowledgeminer:index")
+        else:
+            form = UploadFileForm()
+        context['form'] = form
+        return render(request=request, context=context, template_name='data_insert.html')
+    else:
+        form = AuthenticationForm()
+        return render(request=request, template_name="login.html", context={"login_form":form})
+    
+def exportar_pca(request,columnas):
+    columns = [i[16:] for i in columnas.replace('\"','').split(',')]
+    columns = [i[:-16] if i[len(i)-1] == ' ' else i for i in columns]
+    context = {
+        'var':columns
+    }
+    file_name = request.session['nombre_archivo']
+    file_names = file_name.split('.')
+    file_name = file_names[0]+'_pca_'+str(len(columns))+'_vars.'+file_names[1]
+    current_user  = request.user
+    request.session['archivo'], request.session['path'], request.session['nombre_archivo'] = newFile(file_name,request.session['archivo'],columns,current_user,request.session['path'])
+    messages.success(request, "Se creó el nuevo archivo con los datos seleccionados en el proceso de pca" )
+    return redirect("knowledgeminer:index")
+
+def newFile(file_name,original_file,columns,current_user,path):
+    df = pd.read_csv(original_file)
+    df2 = df.select_dtypes(include=['object'])
+    columns2 = []
+    for i in df2.columns:
+        if i not in columns:
+            columns2.append(i)
+    df2 = df2[columns2]
+    df3 = df[columns]
+    df_final = pd.concat([df3,df2], axis = 1)
+    df_final.to_csv(path+file_name,index = False)
+    file = File(user=current_user,name = file_name,path =path+file_name, columns = list(df_final.columns) )
+    file.save()
+    return [path+file_name,path,file_name]

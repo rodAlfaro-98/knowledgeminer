@@ -41,19 +41,19 @@
         </select>
         <br>
         <br>
-        {% if files|length > 0 %}
+        <div id="dependiente" style="visibility: hidden;">
             <h3>Elija su variable dependiente para realizar el análisis</h3>
-            {% for i in files %}
-                <div id="{{i.name}}" style="visibility: hidden">
-                    <p>Columnas del archivo {{i.name}}</p>
-                    <select name="{{i.name}}">
-                        {% for x in i.get_columns %}
-                            <option value={{x}}>{{x}}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            {% endfor %}
-        {% endif %}
+        </div>
+        {% for i in files %}
+            <div id="{{i.name}}" style="visibility: hidden">
+                <p>Columnas del archivo {{i.name}}</p>
+                <select name="{{i.name}}">
+                    {% for x in i.get_columns %}
+                        <option value={{x}}>{{x}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        {% endfor %}
         <br>
         <br>
         <button type="submit" class="btn btn-primary">Enviar</button>

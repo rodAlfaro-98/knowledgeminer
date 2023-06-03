@@ -10,7 +10,7 @@
     div.scrolly {
         margin:4px, 4px;
         padding:4px;
-        width: 75%;
+        width: 80%;
         height: 400px;
         overflow-x: hidden;
         overflow-y: auto;
@@ -31,7 +31,7 @@
 <center>
 <div class="scroll">
     <div class="scrolly">
-        <table border cellpadding=10 cellspacing=0 width="10%">
+        <table border cellpadding=10 cellspacing=0 width="10%" class="table">
             <tr>
                 {% for col in pca.get_estandarizacion.columns %}
                     <th>
@@ -55,7 +55,7 @@
 <h3>Pasos 3 y 4: Se calcula la matriz de covarianzas o correlaciones, y se calculan los componentes (eigen-vectores) y la varianza (eigen-valores).</h3>
 <center>
     <div class="scroll">
-        <table>
+        <table class="table">
             <tbody>
                 {% for i in pca.get_matriz %}
                     <tr>
@@ -81,7 +81,7 @@
 <p>Cargas componentes:</p>
 <center>
 <div class="scroll">
-    <table border cellpadding=10 cellspacing=0 width="10%">
+    <table id="cargas" border cellpadding=10 cellspacing=0 width="10%" class="table">
         <tr>
             {% for col in pca.get_cargasCom.columns %}
                 <th>
@@ -101,4 +101,15 @@
     </table>
 </div>
 </center>
+<h5>A continuación elija el porcentaje de selección de los distintos componentes:</h5>
+<select name="porcentaje_carga" id="porcentaje_carga" onchange="getCargas()">
+    <option value="100" selected="selected">Seleccione porcentaje</option>
+    {% with '10 15 20 25 30 35 40 45 50 55' as list %}
+        {% for i in list.split %}
+            <option value="{{i}}">{{i}}</option>
+        {% endfor %}
+    {% endwith %}
+</select>
+<h5 id="cargas_header" style="visibility: hidden;"><span id='span_cargas'></span> <span id='valores_cargas'></span></h5>
+<button type="button" class="btn btn-primary" onclick = "getURLCargas()">Exportar varaibles de PCA</button>
 {% endblock content %}
