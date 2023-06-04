@@ -21,7 +21,10 @@
         <!-- Custom styles for this template-->
         <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
 
-    </head>
+        <style>
+        </style>
+
+</head>
 <body>
 <h1>Bienvenido al proceso de Analisis Exploratorio de Datos</h1>
 <p>El Análisis Exploratorio de Datos  (EDA por sus siglas en ingles) es un proceso que nos permite conocer el estado de los datos que vamos a analizar.
@@ -32,7 +35,7 @@
 <p>1.- Forma (dimensiones) del DataFrame</p>
 {{eda.get_forma}}
 <p>2.- tipos de datos</p>
-<table class="table">
+<table  width="100%">
     <thead>
         <tr>
             <th>Columna</th>
@@ -48,10 +51,9 @@
 {% endfor %}
     </tbody>
 </table>
-
 <h3>Paso 2: Identificación de datos faltantes</h3>
 <p>Enumeración de datos nulos por columna</p>
-<table class="table">
+<table  width="100%">
     <thead>
         <tr>
             <th>Columna</th>
@@ -69,7 +71,7 @@
 </table>
 <br>
 <p>Información general del dataset.</p>
-<table class="table">
+<table  width="100%">
     <tr>
         <th>#</th>
         <th>Column</th>
@@ -88,11 +90,12 @@
 </table>
 <h3>Paso 3: Detección de valores atípicos</h3>
 <p>1.- Distribución de variables numéricas</p>
-<img src="data:image/png;base64, {{eda.get_distribucion}}", alt="", height="800", width="800">
+<center>
+    <img src="data:image/png;base64, {{eda.get_distribucion}}", alt="", height="500", width="500">
+</center>
 <br>
 <p>2) Resumen estadístico de variables numéricas</p>
-<div class="scroll">
-<table class="table">
+<table  width="100%">
     <tr>
         <td><b>Valor estadístico</b></td>
         {% for col in eda.get_resumen.columns %}
@@ -106,27 +109,27 @@
                 <td><b>{{index}}</b></td>
             {% for cell in row %}
                 <td>
-                    {{cell}}
+                    {{cell|floatformat:4}}
                 </td>
             {% endfor %}
             </tr>
         {% endfor %}
 </table>
-</div>
 <br>
 <p>3) Diagramas para detectar posibles valores atípicos</p>
-<div class = "scrolly">
     {% for graph in eda.get_diagramas_atipicos %}
-        <img src="data:image/png;base64, {{graph}}", alt="", height="600", width="600">
-        <br>
+        <div>
+            <center>
+                <img src="data:image/png;base64, {{graph}}", alt="", height="500", width="500">
+            </center>
+        </div>
     {% endfor %}
-</div>
 <br>
 {% if  eda.get_categoricas != 0%}
     <p>4) Distribución de variables categóricas</p>
     <p>Tabla de distribución</p>
     {% if  eda.get_categoricas != 0%}
-        <table class="table">
+        <table  width="100%">
             <tr>
                 <td><b>Valor estadístico</b></td>
                 {% for col in eda.get_categoricas_df.columns %}
@@ -153,21 +156,21 @@
     <p>Gráficas de distribución.</p>
     <p>Para evitar gráficas con demasiados datos se mostrarán únicamente las columnas con 10 o menos tipos de categorías</p>
     {% if eda.get_categoricas > 0 %}
-        <div class = "scrolly">
             {% for graph in eda.get_categoricas %}
-                <img src="data:image/png;base64, {{graph}}", alt="", height="600", width="600">
-                <br>
+                <div>
+                    <center>
+                        <img src="data:image/png;base64, {{graph}}", alt="", height="500", width="500">
+                    </center>
+                </div>
             {% endfor %}
-        </div>
     {% else %}
         {% if eda.get_categoricas == -1 or eda.get_categprocas == 0 %}
             <p>Sus variables categóricas cuentan con demasiados valores únicos, por lo cual las gráficas no son visibles</p>
         {% endif %}
     {% endif %}
     <p>5) Agrupación por variables categóricas</p>
-    <div class="scroll">
         {% for dataframe in eda.get_agrupacion%}
-        <table class="table">
+        <table  width="100%">
             <tr>
                 <td><b>Valor estadístico</b></td>
                 {% for col in dataframe.columns %}
@@ -188,12 +191,10 @@
         <br>
         <br>
         {% endfor %}
-    </div>
 {% endif %}
 <h3>Paso 4: Identificación de relaciones entre pares variables</h3>
 <p>Tabla de correlación de valores</p>
-<div class="scroll">
-<table class="table">
+<table  width="100%">
     <tr>
         <td><b>Valor estadístico</b></td>
         {% for col in eda.get_corr.columns %}
@@ -207,18 +208,21 @@
                 <td><b>{{index}}</b></td>
             {% for cell in row %}
                 <td>
-                    {{cell}}
+                    {{cell|floatformat:2}}
                 </td>
             {% endfor %}
             </tr>
         {% endfor %}
 </table>
-</div>
 <p>Gráfica de correlación de valores</p>
-<img src="data:image/png;base64, {{eda.get_corr_graph}}", alt="", height="600", width="800">
+<center>
+    <img src="data:image/png;base64, {{eda.get_corr_graph}}", alt="", height="500", width="700">
+</center>
 <br>
 <p>Gráfica de correlación de valores inferior</p>
-<img src="data:image/png;base64, {{eda.get_corr_inf}}", alt="", height="600", width="800">
+<center>
+    <img src="data:image/png;base64, {{eda.get_corr_inf}}", alt="", height="500", width="700">
+</center>
 <br>
 </body>
 </html>
