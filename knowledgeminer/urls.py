@@ -16,4 +16,6 @@ urlpatterns = [
     path('seleccion/', views.seleccion, name='seleccion'),
     path('exportar/',views.exportar, name = 'exportar'),
     path('export/pca/<str:columnas>/<str:porcentaje>',views.exportar_pca, name = 'exportar_pca'),
+    path('export_pdf/',views.exportar_pdf,name='exportar_pdf'),
+    path('export_pdf/exportacion/',views.seleccion_pdf,name='seleccion_pdf')
 ]

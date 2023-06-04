@@ -82,6 +82,9 @@
 </div>
 <h3>Paso 2: Selección de características.</h3>
 <img src="data:image/png;base64, {{ad.get_selCar}}", alt="", height="600", width="900">
+<a download="ad_seleccion_caracteristicas.png" href="data:image/png;base64, {{ad.get_selCar}}" title="Selección de características">
+    <button class="btn btn-primary">Descargar imagen</button>
+</a>
 <h3>Paso 3: Definición de las variables predictoras y variable clase.</h3>
 <p>Variables preditorias:</p>
 <div class="scrolly">
@@ -201,6 +204,9 @@
 </table>
 <p>&nbsp</p>
 <img src="data:image/png;base64, {{ad.get_arbol}}", alt="", height="600", width="900">
+<a download="ad_arbol_generado.png" href="data:image/png;base64, {{ad.get_arbol}}" title="Arbol de decisión">
+    <button class="btn btn-primary">Descargar imagen</button>
+</a>
 <p>&nbsp</p>
 
 {% endblock content %}

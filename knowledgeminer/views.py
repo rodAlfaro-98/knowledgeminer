@@ -12,6 +12,9 @@ from django.contrib.auth import login, authenticate
 from .models import File
 import os
 import pandas as pd
+from .utils import render_to_pdf
+from django.http import HttpResponse
+import datetime
 
 def create_user_dir(username):
     directory = username
@@ -218,3 +221,72 @@ def newFile(file_name,original_file,columns,current_user,path):
         file = File(user=current_user,name = file_name,path =path+file_name, columns = list(df_final.columns) )
         file.save()
     return [path+file_name,path,file_name]
+
+def exportar_pdf(request):
+    if request.user.is_authenticated:
+        current_user = request.user
+        files = File.objects.filter(user = current_user)
+        names_files = []
+        for file in files:
+            names_files.append(file.name)
+        context = {
+            'names': names_files,
+            'files': files,
+            'username': current_user.username,
+        }
+        return render(request=request, template_name='choose_export.html',context = context)
+    else:
+        form = AuthenticationForm()
+        return render(request=request, template_name="login.html", context={"login_form":form})
+    
+def seleccion_pdf(request):
+    archivo = ''
+    current_user = request.user
+    path = ''
+    nombre_archivo = ''
+    template = 'to_export/'
+    if 'archivos' in request.POST:
+        if request.POST['archivos'] != 'default':
+            archivo = "./knowledgeminer/UserFiles/"+current_user.username+"/"+request.POST['archivos']
+            path = "./knowledgeminer/UserFiles/"+current_user.username+"/"
+            nombre_archivo = request.POST['archivos']
+        else:
+            archivo = "./knowledgeminer/UserFiles/default/"+request.POST['archivos_default']
+            path = "./knowledgeminer/UserFiles/default/"
+            nombre_archivo = request.POST['archivos_default']
+    else:
+        archivo = "./knowledgeminer/UserFiles/default/"+request.POST['usuario_default']
+        path = "./knowledgeminer/UserFiles/default/"
+        nombre_archivo = request.POST['usuario_default']
+    
+    file = archivo
+    data = {
+        'file': file
+    }
+    algoritmo = request.POST['algoritmo']
+    if algoritmo == 'eda' :
+        template +='eda.html'
+        eda = EDA.initialization(file)
+        data['eda'] = eda
+    elif algoritmo == 'pca':
+        template +='pca.html'
+        pca = PCAA.initialization(file)
+        data['pca'] = pca
+    elif algoritmo == 'ad':
+        template +='ad.html'
+        if request.POST['archivos'] != 'default':
+            var_dep = request.POST[request.POST['archivos']]
+            ad = AD.initialization(file,var_dep)
+            data['ad'] = ad
+    elif algoritmo == 'ba':
+        template +='ba.html'
+        if request.POST['archivos'] != 'default':
+            var_dep = request.POST[request.POST['archivos']]
+            ba = BA.initialization(file,var_dep)
+            data['ba'] = ba
+    else:
+        messages.error(request,"Favor de elegir un archivo y algoritmo")
+        return redirect("knowledgeminer:index")
+    
+    pdf = render_to_pdf(template_src= template,context_dict= data)
+    return HttpResponse(pdf, content_type='application/pdf')

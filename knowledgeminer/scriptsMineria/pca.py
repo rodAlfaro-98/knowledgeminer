@@ -43,6 +43,7 @@ def varCorrelacionadas(dataset):
 	plt.figure(figsize=(14,7))
 	corr = dataset.corr(method='pearson')
 	Matriz = np.triu(corr)
+	plt.title('Correlación de variables')
 	sns.heatmap(corr, cmap='RdBu_r', annot=True, mask=Matriz)
 	buf = io.BytesIO()
 	plt.savefig(buf,format='png')

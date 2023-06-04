@@ -6,23 +6,23 @@ function defaultSelected(){
     var archivo = document.getElementsByName("archivos")[0].value;
     var defaultVar = document.getElementsByName('archivos_default')[0];
     if(archivo == "default"){
-        defaultVar.style.visibility='visible';
+        defaultVar.style.display='block';
     }else{
-        defaultVar.style.visibility='hidden';
+        defaultVar.style.display='none';
     }
 }
 
 function selectedAlgorithm(){
     var algoritmo = document.getElementsByName("algoritmo")[0].value;
     var archivo = document.getElementsByName("archivos");
-    document.getElementById('dependiente').style.visibility = 'hidden';
+    document.getElementById('dependiente').style.display='none';
     for( i = 0; i < archivo.length; i++){
-        document.getElementById(archivo[i].value).style.visibility = 'hidden';
+        document.getElementById(archivo[i].value).style.display='none';
     }
     if(algoritmo == "ad" || algoritmo == "ba"){
         if(archivo[0].value != "Seleccione archivo"){
-            document.getElementById('dependiente').style.visibility = 'visible';
-            document.getElementById(archivo[0].value).style.visibility = 'visible';
+            document.getElementById('dependiente').style.display='block';
+            document.getElementById(archivo[0].value).style.display='block';
         }
     }
 }
@@ -43,7 +43,7 @@ function getCargas(){
         }
     }
     if(columnas.size > 0){
-        document.getElementById('cargas_header').style.visibility = 'visible';
+        document.getElementById('cargas_header').style.display='block';
         document.getElementById('span_cargas').innerHTML = 'Las columnas con cargas importantes son:';
         columnas_array = Array.from(columnas)
         document.getElementById('valores_cargas').innerHTML = columnas_array.toString();

@@ -1,25 +1,28 @@
-<style>
-    div.scroll {
-        margin: 4px, 4px;
-        padding: 4px;
-        overflow-x: auto;
-        overflow-y: hidden;
-    }
-
-    div.scrolly {
-        margin:4px, 4px;
-        padding:4px;
-        width: 500px;
-        height: 400px;
-        overflow-x: hidden;
-        overflow-y: auto;
-    }
-</style>
-
-{% extends 'base.html' %}
+<!DOCTYPE html>
 {% load static %}
-{% block content %}
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <title>Report App | {% block title %} {% endblock title %}</title>
+        <script src="{% static 'js/user.js' %}"></script>
+         <!-- Custom fonts for this template-->
+        <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+        <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
 
+        <!-- Custom styles for this template-->
+        <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+    </head>
+<body>
 <h1>Bienvenido a la revisión del algoritmo de Bosques Aleatorios</h1>
 <p>A continuación se mostrará el proceso de EDA para el dataset <b>{{file}}</b></p>
 
@@ -27,14 +30,8 @@
 <h5>1) Distribución de variables</h5>
 <p>Gráfica donde se muestra una gráfica de dispersión con la distribución de dos variables numéricas del dataset proprocionado</p>
 <img src="data:image/png;base64, {{ba.get_var_graphs}}", alt="", height="600", width="700">
-<a download="ba_dispersion_variables.png" href="data:image/png;base64, {{ba.get_var_graphs}}" title="Dispersión de variables">
-    <button class="btn btn-primary">Descargar imagen</button>
-</a>
 <h5>2) Distribución de variables</h5>
 <img src="data:image/png;base64, {{ba.get_corr_graph}}", alt="", height="500", width="700">
-<a download="ba_correlacion.png" href="data:image/png;base64, {{ba.get_corr_graph}}" title="Correlación de variables">
-    <button class="btn btn-primary">Descargar imagen</button>
-</a>
 <h5>3) Definición de las variables predictoras y variables clase</h5>
 <p>Las variables utilizadas como variables independientes son las siguientes:</p>
 <ul>
@@ -55,14 +52,16 @@
             {% endfor %}
         </tr>
             {% for index, row in ba.get_indep_vars.1.iterrows %}
-                <tr>
-                    <td><b>{{index}}</b></td>
-                {% for cell in row %}
-                    <td>
-                        {{cell}}
-                    </td>
-                {% endfor %}
-                </tr>
+                {% if forloop.counter < 10 %}
+                    <tr>
+                        <td><b>{{index}}</b></td>
+                    {% for cell in row %}
+                        <td>
+                            {{cell}}
+                        </td>
+                    {% endfor %}
+                    </tr>
+                {% endif %}
             {% endfor %}
     </table>
 </div></div>
@@ -81,10 +80,12 @@
         </thead>
         <tbody>
             {% for item in ba.get_dep_vars.1 %}
+            {% if forloop.counter < 10 %}
                 <tr>
                     <td>{{ forloop.counter0 }}</td>
                     <td>{{item}}</td>
                 </tr>
+            {% endif %}
             {% endfor %}
         </tbody>
     </table>
@@ -119,10 +120,12 @@
         </thead>
         <tbody>
             {% for item in ba.predict %}
-                <tr>
-                    <td>{{ forloop.counter0 }}</td>
-                    <td>{{item}}</td>
-                </tr>
+                {% if forloop.counter < 10 %}
+                    <tr>
+                        <td>{{ forloop.counter0 }}</td>
+                        <td>{{item}}</td>
+                    </tr>
+                {% endif %}
             {% endfor %}
         </tbody>
     </table>
@@ -135,6 +138,7 @@
             <td>Obtenido</td>
         </tr>
             {% for index, row in ba.get_comparation.iterrows %}
+            {% if forloop.counter < 10 %}
                 <tr>
                     <td><b>{{index}}</b></td>
                 {% for cell in row %}
@@ -143,6 +147,7 @@
                     </td>
                 {% endfor %}
                 </tr>
+            {% endif %}
             {% endfor %}
     </table>
 </div>
@@ -170,6 +175,7 @@
         {% endfor %}
     </tr>
         {% for index, row in ba.get_matriz_clasificacion.iterrows %}
+        {% if forloop.counter < 10 %}
             <tr>
                 <td><b>{{index}}</b></td>
             {% for cell in row %}
@@ -178,6 +184,9 @@
                 </td>
             {% endfor %}
             </tr>
+        {% endif %}
         {% endfor %}
 </table>
-{% endblock content %}
+{{ba.get_reporte_clasificacion.3 | linebreaks}}
+</body>
+</html>

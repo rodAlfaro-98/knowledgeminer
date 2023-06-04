@@ -129,7 +129,7 @@ def valoresAtipicos(dataset):
     #Variables categóricas
     graphs_cat = []
     for col in dataset.select_dtypes(include='object'):
-        if dataset[col].nunique()<10:
+        if dataset[col].nunique()<=15:
             plt.clf()
             sns.countplot(y=col, data=dataset).set_title(col)
             buf = io.BytesIO()
@@ -143,7 +143,7 @@ def valoresAtipicos(dataset):
     agrupacion = []
     print(len(dataset.select_dtypes(include='object')))
     for col in dataset.select_dtypes(include='object'):
-        if dataset[col].nunique() < 10:
+        if dataset[col].nunique()<=15:
         #Obtenemos la mediana de cada columna agregado por una sola columna.
             agrupacion.append(dataset.groupby(col).agg(['mean']))
     categoria_df = 0

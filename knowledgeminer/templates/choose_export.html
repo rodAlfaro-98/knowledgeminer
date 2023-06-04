@@ -2,7 +2,8 @@
 {% load static %}
 {% block content %}
     <h1>Bienvenido {{username}}</h1>
-    <form action="seleccion/" method="post">
+    <h3>A continuación se le pedirá elegir el archivo a exportar, al igual que el algoritmo a exportar</h3>
+    <form action="exportacion/" method="post">
         {% csrf_token %}
         {% if files|length > 0 %}
             <h3>Sus archivos son los siguientes:</h3>
@@ -59,6 +60,4 @@
         <button type="submit" class="btn btn-primary">Enviar</button>
     </form>
     <br>
-    <h5>Si desea guardar un nuevo archivo favor de acceder al siguiente link</h5>
-    <a href="{% url 'knowledgeminer:input' %}">Ingresar nuevo dataset</a>
 {% endblock content %}

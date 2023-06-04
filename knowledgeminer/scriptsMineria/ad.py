@@ -191,6 +191,7 @@ def eficonfMod(dataset,dependiente):
                                 'Importancia': ClasificacionAD.feature_importances_}).sort_values('Importancia', ascending=False)
 
 	plt.figure(figsize=(16,16))
+	plt.title('Arbol de decisión generado')
 	plot_tree(ClasificacionAD, feature_names = columnas)
 	buf1 = io.BytesIO()
 	plt.savefig(buf1,format='png')
