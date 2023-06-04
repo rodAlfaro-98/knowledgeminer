@@ -288,5 +288,16 @@ def seleccion_pdf(request):
         messages.error(request,"Favor de elegir un archivo y algoritmo")
         return redirect("knowledgeminer:index")
     
-    pdf = render_to_pdf(template_src= template,context_dict= data)
-    return HttpResponse(pdf, content_type='application/pdf')
+    pdf = render_to_pdf(template_src= template,context_dict= data, fileName=algoritmo+"_"+nombre_archivo+".pdf")
+    return pdf
+    """if pdf:
+        print("rendered pdf")
+        response = HttpResponse(pdf, content_type="application/pdf")
+        filename = algoritmo+"_"+nombre_archivo+"_%s.pdf" %('12341231')
+        download = request.GET.get("download")
+        if download:
+            print("Downloadable")
+            content = "attachment; filename='%s'" %(filename)
+        response['Content-Disposition'] = content
+        return response"""
+    return HttpResponse("Not found!")

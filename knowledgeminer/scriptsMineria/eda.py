@@ -115,7 +115,6 @@ def valoresAtipicos(dataset):
     #Obtención de histograma de valores atípicos
     cols_atipicas = get_outliers(dataset)
     graphs = []
-    print("Entrand a paso 3.1")
     for col in cols_atipicas:
         plt.clf()
         sns.boxplot(data=dataset[col],orient='h').set_title(col)
@@ -125,7 +124,6 @@ def valoresAtipicos(dataset):
         string = base64.b64encode(buf.read())
         uri = urllib.parse.quote(string)
         graphs.append(uri)
-    print("Entrand a paso 3.2")
     #Variables categóricas
     graphs_cat = []
     for col in dataset.select_dtypes(include='object'):
@@ -138,7 +136,6 @@ def valoresAtipicos(dataset):
             string = base64.b64encode(buf.read())
             uri = urllib.parse.quote(string)
             graphs_cat.append(uri)
-    print("Entrand a paso 3.3")
     # Agrupación por variables categóricas
     agrupacion = []
     print(len(dataset.select_dtypes(include='object')))
@@ -191,13 +188,9 @@ def relaciones_variables(dataset):
 def initialization(file_path):
     dataset = pd.read_csv(file_path)
     dataset = dataset.iloc[0:500000]
-    print("Entrando a paso 1")
     paso1 = descripcionEstructura(dataset)
-    print("Entrando a paso 2")
     paso2 = datosFaltantes(dataset)
-    print("Entrando a paso 3")
     paso3 = valoresAtipicos(dataset)
-    print("Entrando a paso 4")
     paso4 = relaciones_variables(dataset)
     eda = EDA(dataset,paso1,paso2,paso3,paso4)
     return eda
