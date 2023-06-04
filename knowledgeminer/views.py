@@ -194,7 +194,7 @@ def exportar(request):
         form = AuthenticationForm()
         return render(request=request, template_name="login.html", context={"login_form":form})
     
-def exportar_pca(request,columnas):
+def exportar_pca(request,columnas,porcentaje):
     columns = [i[16:] for i in columnas.replace('\"','').split(',')]
     columns = [i[:-16] if i[len(i)-1] == ' ' else i for i in columns]
     context = {
@@ -202,7 +202,7 @@ def exportar_pca(request,columnas):
     }
     file_name = request.session['nombre_archivo']
     file_names = file_name.split('.')
-    file_name = file_names[0]+'_pca_'+str(len(columns))+'_vars.'+file_names[1]
+    file_name = file_names[0]+'_pca_'+str(len(columns))+'_vars_'+str(porcentaje)+'%.'+file_names[1]
     current_user  = request.user
     request.session['archivo'], request.session['path'], request.session['nombre_archivo'] = newFile(file_name,request.session['archivo'],columns,current_user,request.session['path'])
     messages.success(request, "Se creó el nuevo archivo con los datos seleccionados en el proceso de pca" )
@@ -211,14 +211,10 @@ def exportar_pca(request,columnas):
 def newFile(file_name,original_file,columns,current_user,path):
     df = pd.read_csv(original_file)
     df2 = df.select_dtypes(include=['object'])
-    columns2 = []
-    for i in df2.columns:
-        if i not in columns:
-            columns2.append(i)
-    df2 = df2[columns2]
     df3 = df[columns]
-    df_final = pd.concat([df3,df2], axis = 1)
+    df_final = pd.concat([df3,df2], axis = 1, join='inner')
     df_final.to_csv(path+file_name,index = False)
-    file = File(user=current_user,name = file_name,path =path+file_name, columns = list(df_final.columns) )
-    file.save()
+    if File.objects.filter(path=path+file_name).count() == 0:
+        file = File(user=current_user,name = file_name,path =path+file_name, columns = list(df_final.columns) )
+        file.save()
     return [path+file_name,path,file_name]

@@ -1,4 +1,6 @@
-var columnas = []
+var columnas = new Set();
+var columnas_array = []
+var porcentaje = 0;
 
 function defaultSelected(){
     var archivo = document.getElementsByName("archivos")[0].value;
@@ -26,23 +28,25 @@ function selectedAlgorithm(){
 }
 
 function getCargas(){
-    columnas = [];
+    columnas = new Set();
     var table = document.getElementById('cargas');
-    var porcentaje = document.getElementById("porcentaje_carga").value;
+    porcentaje = 0
+    porcentaje = document.getElementById("porcentaje_carga").value;
     for( var r = 0, n = table.rows.length; r < n; r++){
         for(var c = 0, m = table.rows[r].cells.length; c < m; c++){
             if(table.rows[r].cells[c].innerHTML >= (porcentaje/100)){
                 table.rows[r].cells[c].style.backgroundColor  = "#D6EEEE";
-                columnas.push(table.rows[0].cells[c].innerHTML);
+                columnas.add(table.rows[0].cells[c].innerHTML);
             }else{
                 table.rows[r].cells[c].style.backgroundColor  = "#FFFFFF";
             }
         }
     }
-    if(columnas.length > 0){
+    if(columnas.size > 0){
         document.getElementById('cargas_header').style.visibility = 'visible';
         document.getElementById('span_cargas').innerHTML = 'Las columnas con cargas importantes son:';
-        document.getElementById('valores_cargas').innerHTML = columnas.toString();
+        columnas_array = Array.from(columnas)
+        document.getElementById('valores_cargas').innerHTML = columnas_array.toString();
     }else{
         document.getElementById('span_cargas').innerHTML = 'No se cuentan con columnas que cumplan con el porcentaje seleccionado';
         document.getElementById('valores_cargas').innerHTML = '';
@@ -51,5 +55,5 @@ function getCargas(){
 }
 
 function getURLCargas(){
-    return window.location.replace('../../knowledgeminer/export/pca/'+columnas);
+    return window.location.replace('../../knowledgeminer/export/pca/'+columnas_array+'/'+porcentaje.toString());
 }

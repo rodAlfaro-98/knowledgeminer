@@ -15,5 +15,5 @@ urlpatterns = [
     path('login/', views.login_request, name='login'),
     path('seleccion/', views.seleccion, name='seleccion'),
     path('exportar/',views.exportar, name = 'exportar'),
-    path('export/pca/<str:columnas>',views.exportar_pca, name = 'exportar_pca'),
+    path('export/pca/<str:columnas>/<str:porcentaje>',views.exportar_pca, name = 'exportar_pca'),
 ]

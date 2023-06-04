@@ -97,6 +97,7 @@ def train_validation(x,y):
 
 def initialization(file_path,dependiente):
     dataset = pd.read_csv(file_path)
+    dataset = dataset.iloc[0:500000]
     x,y,columnas = separacion(dataset,dependiente)
     X_train, X_validation, Y_train, Y_validation = train_validation(x,y)
     return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas)
