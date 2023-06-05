@@ -3,6 +3,7 @@ from .scriptsMineria import eda as EDA
 from .scriptsMineria import bosque_aleatorio as BA
 from .scriptsMineria import pca as PCAA
 from .scriptsMineria import ad as AD
+from .scriptsMineria import validacion as Validacion
 from .forms.UploadFileForm import UploadFileForm
 from .forms.Register import NewUserForm
 from django.contrib import messages
@@ -14,7 +15,7 @@ import os
 import pandas as pd
 from .utils import render_to_pdf
 from django.http import HttpResponse
-import datetime
+from django.contrib.auth import logout
 
 def create_user_dir(username):
     directory = username
@@ -86,6 +87,20 @@ def ad_prueba(request):
         'file': file,
     }
     return render(request = request, template_name = 'ad.html', context = context)
+
+def comparacion(request):
+    file_name = request.session['archivo']
+    file = file_name.split('/')[len(file_name.split('/'))-1]
+    ad = AD.initialization(file_name,request.session['var_dep'])
+    ba = BA.initialization(file_name,request.session['var_dep'])
+    validacion = Validacion.initialization(ad,ba,request.session['var_dep'])
+    context = {
+        'validacion':validacion,
+        'ad': ad,
+        'ba': ba,
+        'file': file
+    }
+    return render(request= request, template_name= 'comparacion.html', context= context)
 
 def register_request(request):
     if request.method == "POST":
@@ -177,6 +192,11 @@ def seleccion(request):
             var_dep = request.POST[request.POST['archivos']]
             request.session['var_dep'] = var_dep
         return redirect("knowledgeminer:ba")
+    elif algoritmo == 'cab':
+        if request.POST['archivos'] != 'default':
+            var_dep = request.POST[request.POST['archivos']]
+            request.session['var_dep'] = var_dep
+        return redirect("knowledgeminer:cab")
     else:
         messages.error(request,"Favor de elegir un archivo y algoritmo")
         return redirect("knowledgeminer:index")
@@ -284,20 +304,23 @@ def seleccion_pdf(request):
             var_dep = request.POST[request.POST['archivos']]
             ba = BA.initialization(file,var_dep)
             data['ba'] = ba
+    elif algoritmo == 'cab':
+        template += 'comparacion.html'
+        if request.POST['archivos'] != 'default':
+            var_dep = request.POST[request.POST['archivos']]
+            ad = AD.initialization(file,var_dep)
+            ba = BA.initialization(file,var_dep)
+            validacion = Validacion.initialization(ad,ba,var_dep)
+            data['validacion'] = validacion
+            data['ad'] = ad
+            data['ba'] = ba
     else:
         messages.error(request,"Favor de elegir un archivo y algoritmo")
         return redirect("knowledgeminer:index")
     
     pdf = render_to_pdf(template_src= template,context_dict= data, fileName=algoritmo+"_"+nombre_archivo+".pdf")
     return pdf
-    """if pdf:
-        print("rendered pdf")
-        response = HttpResponse(pdf, content_type="application/pdf")
-        filename = algoritmo+"_"+nombre_archivo+"_%s.pdf" %('12341231')
-        download = request.GET.get("download")
-        if download:
-            print("Downloadable")
-            content = "attachment; filename='%s'" %(filename)
-        response['Content-Disposition'] = content
-        return response"""
-    return HttpResponse("Not found!")
+
+def logout_view(request):
+    logout(request)
+    return redirect('knowledgeminer:login')

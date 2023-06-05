@@ -61,7 +61,7 @@
 </table>
 <p>&nbsp</p>
 <div class="scroll">
-    <table border cellpadding=10 cellspacing=0 width="10%">
+    <table class="table" cellpadding=10 cellspacing=0 >
         <tr>
             {% for col in ad.get_datos2.columns %}
                 <th>
@@ -81,14 +81,15 @@
     </table>
 </div>
 <h3>Paso 2: Selección de características.</h3>
-<img src="data:image/png;base64, {{ad.get_selCar}}", alt="", height="600", width="900">
+<img src="data:image/png;base64, {{ad.get_selCar}}", alt="", height="500", width="700">
 <a download="ad_seleccion_caracteristicas.png" href="data:image/png;base64, {{ad.get_selCar}}" title="Selección de características">
     <button class="btn btn-primary">Descargar imagen</button>
 </a>
 <h3>Paso 3: Definición de las variables predictoras y variable clase.</h3>
 <p>Variables preditorias:</p>
+<div class="scroll">
 <div class="scrolly">
-    <table border cellpadding=10 cellspacing=0 width="10%">
+    <table class="table" cellpadding=10 cellspacing=0 >
         <tr>
             {% for col in ad.get_varPred.columns %}
                 <th>
@@ -107,10 +108,11 @@
             {% endfor %}
     </table>
 </div>
+</div>
 <p>&nbsp</p>
 <p>Variables clase:</p>
 <div class="scrolly">
-    <table border cellpadding=10 cellspacing=0 width="10%">
+    <table class="table" cellpadding=10 cellspacing=0 >
         <tr>
             <th>
                 Etiquetado
@@ -138,7 +140,7 @@
 {{ad.get_yclasif}}
 <p>&nbsp</p>
 <div class="scrolly">
-    <table border cellpadding=10 cellspacing=0 width="10%">
+    <table class="table" cellpadding=10 cellspacing=0 >
         <thead>
             <tr>
                 <th>
@@ -162,15 +164,25 @@
 <p>&nbsp</p>
 {{ad.get_resultado}}
 <h3>Matriz de Clasificación.</h3>
-<table border cellpadding=10 cellspacing=0 width="10%">
-    <tbody>
-{% for index, item in  ad.get_mClasif.items %}
-        <tr>
-            <td>{{index}}</td>
-            <td>{{item}}</td>
-        </tr>
-{% endfor %}
-    </tbody>
+<table class="table" style="width: 50%">
+    <tr>
+        <td></td>
+        {% for col in ad.get_mClasif.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_mClasif.iterrows %}
+            <tr>
+                <td><b>{{index}}</b></td>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
 </table>
 <p>&nbsp</p>
 <p>Criterio:</p>
@@ -184,7 +196,7 @@
 <p>&nbsp</p>
 {{ad.get_reporte}}
 <h3>Eficiencia y conformación del modelo de clasificación.</h3>
-<table border cellpadding=10 cellspacing=0 width="10%">
+<table class="table" cellpadding=10 cellspacing=0 >
     <tr>
         {% for col in ad.get_impMod.columns %}
             <th>
@@ -203,8 +215,8 @@
         {% endfor %}
 </table>
 <p>&nbsp</p>
-<img src="data:image/png;base64, {{ad.get_arbol}}", alt="", height="600", width="900">
-<a download="ad_arbol_generado.png" href="data:image/png;base64, {{ad.get_arbol}}" title="Arbol de decisión">
+<img src="data:image/png;base64, {{ad.get_arbol_graph}}", alt="", height="600", width="900">
+<a download="ad_arbol_generado.png" href="data:image/png;base64, {{ad.get_arbol_graph}}" title="Arbol de decisión">
     <button class="btn btn-primary">Descargar imagen</button>
 </a>
 <p>&nbsp</p>

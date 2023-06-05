@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <title>Report App | {% block title %} {% endblock title %}</title>
+        <script src="{% static 'js/user.js' %}"></script>
+         <!-- Custom fonts for this template-->
+        <link href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+        <link
+            href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+            rel="stylesheet">
+
+        <!-- Custom styles for this template-->
+        <link href="{% static 'css/sb-admin-2.min.css' %}" rel="stylesheet">
+
+        <style>
+        </style>
+
+</head>
+<body>
+<h1>Bienvenido a la vista de comparación</h1>
+<h1><b>Árboles de decision</b></h1>
+<p>Los Árboles de Desición (AD) permiten resolver problemas de regresión (pronostico) y clasificación.
+</p>
+<p>A continuación se mostrará el modelo de AD para el dataset <b>{{file}}</b></p>
+<h3>Paso 1: Acceso a los datos.</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Columna</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  ad.get_datos.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>&nbsp</p>
+<p>Outcome:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Resultados</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  ad.get_datos1.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>&nbsp</p>
+<div >
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <tr>
+            {% for col in ad.get_datos2.columns %}
+                <th>
+                {{col}}
+                </th>
+            {% endfor %}
+        </tr>
+            {% for index, row in ad.get_datos2.iterrows %}
+            {% if forloop.counter < 10 %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell|floatformat:4}}
+                    </td>
+                {% endfor %}
+                </tr>
+                {% endif %}
+            {% endfor %}
+    </table>
+</div>
+<h3>Paso 2: Selección de características.</h3>
+<img src="data:image/png;base64, {{ad.get_selCar}}", alt="", height="600", width="900">
+<h3>Paso 3: Definición de las variables predictoras y variable clase.</h3>
+<p>Variables preditorias:</p>
+<div >
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <tr>
+            {% for col in ad.get_varPred.columns %}
+                <th>
+                {{col}}
+                </th>
+            {% endfor %}
+        </tr>
+            {% for index, row in ad.get_varPred.iterrows %}
+            {% if forloop.counter < 10 %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell|floatformat:4}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+    </table>
+</div>
+<p>&nbsp</p>
+<p>Variables clase:</p>
+<div >
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <tr>
+            <th>
+                Etiquetado
+            </th>
+        </tr>
+            {% for index, row in ad.get_varClas.iterrows %}
+            {% if forloop.counter < 10 %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell|floatformat:4}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+    </table>
+</div>
+<h3>Pasaremos a la creación del modelo, en este caso será el modelo AD.</h3>
+{{ad.get_xTrain}}
+<p>&nbsp</p>
+{{ad.get_xVal}}
+<h3>Modelo Árboles de Desiciones.</h3>
+<p>Clasificación AD.</p>
+{{ad.get_clasif}}
+<p>Clasificación final.</p>
+{{ad.get_yclasif}}
+<p>&nbsp</p>
+<div >
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <thead>
+            <tr>
+                <th>
+                    Predicción
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in ad.get_valM.iterrows %}
+            {% if forloop.counter < 10 %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell|floatformat:4}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p>&nbsp</p>
+{{ad.get_resultado}}
+<h3>Matriz de Clasificación.</h3>
+<table class="table" style="width: 50%">
+    <tr>
+        <td></td>
+        {% for col in ad.get_mClasif.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_mClasif.iterrows %}
+        {% if forloop.counter < 10 %}
+            <tr>
+                <td><b>{{index}}</b></td>
+            {% for cell in row %}
+                <td>
+                    {{cell|floatformat:4}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endif %}
+        {% endfor %}
+</table>
+<p>&nbsp</p>
+<p>Criterio:</p>
+{{ad.get_criterio}}
+<p>&nbsp</p>
+<p>Importancia variables:</p>
+{{ad.get_impVar}}
+<p>&nbsp</p>
+<p>Exactitud:</p>
+{{ad.get_exactitud}}
+<p>&nbsp</p>
+{{ad.get_reporte}}
+<h3>Eficiencia y conformación del modelo de clasificación.</h3>
+<table class="table" cellpadding=10 cellspacing=0 >
+    <tr>
+        {% for col in ad.get_impMod.columns %}
+            <th>
+            {{col}}
+            </th>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_impMod.iterrows %}
+        {% if forloop.counter < 10 %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                {{cell|floatformat:4}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endif %}
+        {% endfor %}
+</table>
+<p>&nbsp</p>
+<img src="data:image/png;base64, {{ad.get_arbol_graph}}", alt="", height="600", width="900">
+<p>&nbsp</p>
+<hr>
+<h1><b>Bosques Aleatorios</b></h1>
+<h3>Análisis previo</h3>
+<h5>1) Distribución de variables</h5>
+<p>Gráfica donde se muestra una gráfica de dispersión con la distribución de dos variables numéricas del dataset proprocionado</p>
+<img src="data:image/png;base64, {{ba.get_var_graphs}}", alt="", height="600", width="700">
+<h5>2) Distribución de variables</h5>
+<img src="data:image/png;base64, {{ba.get_corr_graph}}", alt="", height="500", width="700">
+<h5>3) Definición de las variables predictoras y variables clase</h5>
+<p>Las variables utilizadas como variables independientes son las siguientes:</p>
+<ul>
+    {% for item in ba.get_indep_vars.0 %}
+        <li>{{item}}</li>
+    {% endfor %}
+</ul>
+<p>El dataframe es el siguiente:</p>
+<div >
+<div >
+    <table class="table">
+        <tr>
+            <td><b>Índice</b></td>
+            {% for col in ba.get_indep_vars.1.columns %}
+                <td>
+                {{col}}
+                </td>
+            {% endfor %}
+        </tr>
+            {% for index, row in ba.get_indep_vars.1.iterrows %}
+            {% if forloop.counter < 10 %}
+                <tr>
+                    <td><b>{{index}}</b></td>
+                {% for cell in row %}
+                    <td>
+                        {{cell|floatformat:4}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+    </table>
+</div></div>
+<p>La variable independiente es la siguiente:</p>
+<ul>
+    <li>{{ba.get_dep_vars.0}}</li>
+</ul>
+<p>El dataframe es el siguiente:</p>
+<div >
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Etiqueta</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ba.get_dep_vars.1 %}
+            {% if forloop.counter < 10 %}
+                <tr>
+                    <td>{{ forloop.counter0 }}</td>
+                    <td>{{item}}</td>
+                </tr>
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<h3>Creación de modelo</h3>
+<h5>División de datos en conjunto de entrenamiento y de validación</h5>
+<p>Tenemos que dividir nuestro conjunto de datos en datos de entrenamiento y datos de validación.
+    Esto se hace con la finalidad de poder entrenar el modelo con un conjunto de datos y usar otro
+    para comparar que tan bien se entrenó el modelo. Nuestra división se realiza con un 80% de
+    datos para entrenar y 20% para validar, siendo el tamaño de cada uno de los conjuntos el siguiente:
+</p>
+<ul>
+    <li>Entrenamiento: {{ba.get_size_division.0}}</li>
+    <li>Validación: {{ba.get_size_division.1}}</li>
+</ul>
+
+<h3>Entrenamiento Bosque</h3>
+<p>Para entrenar el bosque se debe de crear un objeto de tipo bosque, al cual se le pasarán como parámetros
+    de entrenamiento nuestras variables de <i>X_train</i> <i>Y_train</i>.</p>
+<p>La función de fit retorna un estimador del algoritmo del bosque aleatorio</p>
+<br>
+<p>Decision Tee Classifier:</p>
+{{ba.train}}
+<p>Ya teniendo el bosque podemos entrenarlo. Para esto utilizaremos el método <i>.predict</i>. La salida de la predicción de nuestro árbol es la siguiente:</p>
+<div >
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Etiqueta</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in ba.predict %}
+                <tr>
+                    <td>{{ forloop.counter0 }}</td>
+                    <td>{{item}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p>A continuación podemos comparar uno a uno las salidas de la predicción con nuestros datos de validación</p>
+<div >
+    <table class="table">
+        <tr>
+            <td><b>Real</b></td>
+            <td>Obtenido</td>
+        </tr>
+            {% for index, row in ba.get_comparation.iterrows %}
+            {% if forloop.counter < 10 %}
+                <tr>
+                    <td><b>{{index}}</b></td>
+                {% for cell in row %}
+                    <td>
+                        {{cell|floatformat:4}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endif %}
+            {% endfor %}
+    </table>
+</div>
+<p>Para mayor facilidad de entendimiento de la salida de nuestro bosque, podemos revisar el porcentaje de exactitud, siendo este el siguiente:</p>
+<p><b>{{ba.get_accuracy}}</b></p>
+<br>
+<h3>Matriz de clasificación</h3>
+<p>Nuestra matriz de clasificación es una tabla que nos muestra cuantos valores fueron
+    asignados a las siguientes categorías:
+</p>
+<ul>
+    <li>Verdaderos Positivos</li>
+    <li>Falsos Positivos</li>
+    <li>Verdaderos Negativos</li>
+    <li>Falsos Negativos</li>
+</ul>
+<p>La diagonal principal nos muestra los valores que fueron correctamente clasificados</p>
+<table class="table" style="width: 50%">
+    <tr>
+        <td></td>
+        {% for col in ba.get_matriz_clasificacion.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in ba.get_matriz_clasificacion.iterrows %}
+        {% if forloop.counter < 10 %}
+            <tr>
+                <td><b>{{index}}</b></td>
+            {% for cell in row %}
+                <td>
+                    {{cell|floatformat:4}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endif %}
+        {% endfor %}
+</table>
+<hr>
+<h1><b>Validación (Rendimiento)</b></h1>
+<h3>Valores de exactitud</h3>
+<p>Árbol de decisión: {{validacion.get_accuracies.0}}</p>
+<p>Bosque aleatorio: {{validacion.get_accuracies.1}}</p>
+<br>
+<h3>Gráficas de ROC</h3>
+{% for image in validacion.get_ROC %}
+<img src="data:image/png;base64, {{image}}", alt="", height="500", width="700">
+{% endfor %}
+</body>

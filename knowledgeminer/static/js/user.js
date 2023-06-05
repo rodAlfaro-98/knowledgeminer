@@ -19,7 +19,7 @@ function selectedAlgorithm(){
     for( i = 0; i < archivo.length; i++){
         document.getElementById(archivo[i].value).style.display='none';
     }
-    if(algoritmo == "ad" || algoritmo == "ba"){
+    if(algoritmo == "ad" || algoritmo == "ba" || algoritmo == "cab"){
         if(archivo[0].value != "Seleccione archivo"){
             document.getElementById('dependiente').style.display='block';
             document.getElementById(archivo[0].value).style.display='block';

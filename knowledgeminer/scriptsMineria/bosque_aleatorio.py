@@ -20,6 +20,7 @@ class BA():
         self.dataset = dataset
         self.dependiente = dependiente
         self.X = X
+        self.dataset = dataset
 
     def train(self):
         return self.arbol.fit(self.X_train, self.Y_train.ravel())
@@ -79,6 +80,18 @@ class BA():
 
     def get_comparation(self):
         return pd.DataFrame(self.Y_validation,self.predict())
+    
+    def get_bosque(self):
+        return self.arbol
+    
+    def get_X_validation(self):
+        return self.X_validation
+    
+    def get_Y_validation(self):
+        return self.Y_validation
+    
+    def get_train(self):
+        return [self.X_train, self.Y_train.ravel()]
 
 def separacion(dataset,dependiente):
     y = np.array(dataset[[dependiente]])

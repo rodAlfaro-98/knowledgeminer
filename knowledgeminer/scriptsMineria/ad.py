@@ -78,12 +78,23 @@ class AD():
 	def get_impMod(self):
 		return self.paso7['impMod']
 
-	def get_arbol(self):
+	def get_arbol_graph(self):
 		return self.paso7['arbol']
 
 	def get_rep(self):
 		return self.paso7['rep']
 
+	def get_accuracy(self):
+		return self.paso5['resultado']
+
+	def get_arbol(self):
+		return self.paso5['arbol']
+	
+	def get_X_validation(self):
+		return X_validation
+	
+	def get_Y_validation(self):
+		return Y_validation
 
 def accesoDatos(dataset,dependiente):
 	dat = dataset.groupby(dependiente).size()
@@ -96,10 +107,10 @@ def accesoDatos(dataset,dependiente):
 
 def selCaracteristcas(dataset):
 	plt.clf()
-	Matriz = np.triu(dataset.corr())
-	sns.heatmap(dataset.corr(), cmap='RdBu_r', annot=True, mask=Matriz)
+	MatrizInf = np.triu(dataset.corr())
+	sns.heatmap(dataset.corr(), cmap='RdBu_r', annot=True, mask=MatrizInf)
 	buf = io.BytesIO()
-	plt.savefig(buf,format='png')
+	plt.savefig(buf, format='png')
 	buf.seek(0)
 	string = base64.b64encode(buf.read())
 	uri = urllib.parse.quote(string)
@@ -160,6 +171,7 @@ def modeloAd(dataset):
 
 	ValoresMod1 = pd.DataFrame(Y_validation, Y_ClasificacionAD)
 	paso5 = {
+		'arbol': ClasificacionAD,
 		'clasif': z,
 		'yclasif': Y_ClasificacionAD,
 		'valM': ValoresMod1,
