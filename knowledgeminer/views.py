@@ -3,6 +3,7 @@ from .scriptsMineria import eda as EDA
 from .scriptsMineria import bosque_aleatorio as BA
 from .scriptsMineria import pca as PCAA
 from .scriptsMineria import ad as AD
+from .scriptsMineria import clustering as CLUSTERING
 from .scriptsMineria import validacion as Validacion
 from .forms.UploadFileForm import UploadFileForm
 from .forms.Register import NewUserForm
@@ -89,6 +90,16 @@ def ad_prueba(request):
         'file': file,
     }
     return render(request = request, template_name = 'ad.html', context = context)
+
+#def clustering_prueba(request):
+#    file_name = request.session['archivo']
+#    file = file_name.split('/')[len(file_name.split('/'))-1]
+#    clustering = CLUSTERING.initialization(file_name,request.session['var_dep'])
+#    constext = {
+#        'clustering': clustering,
+#        'file': file,
+#    }
+#    return render(request = request, template_name = 'clustering-html', context = context)
 
 def comparacion(request):
     file_name = request.session['archivo']
@@ -194,6 +205,11 @@ def seleccion(request):
             var_dep = request.POST[request.POST['archivos']]
             request.session['var_dep'] = var_dep
         return redirect("knowledgeminer:ba")
+#    elif algoritmo == 'clustering':
+#        if request.POST['archivos'] != 'default':
+#            var_dep = request.POST[request.POST['archivos']]
+#            request.session['var_dep'] = var_dep
+#        return redirect("knowledgeminer:clustering")
     elif algoritmo == 'cab':
         if request.POST['archivos'] != 'default':
             var_dep = request.POST[request.POST['archivos']]
@@ -306,6 +322,12 @@ def seleccion_pdf(request):
             var_dep = request.POST[request.POST['archivos']]
             ba = BA.initialization(file,var_dep,request)
             data['ba'] = ba
+#    elif algoritmo == 'clustering':
+#        template += 'clustering.html'
+#        if request.POST['archivos'] != 'default':
+#            var_dep = request.POST[request.POST['archivos']]
+#            clustering = CLUSTERING.initialization(file,var_dep)
+#            data['clustering'] = clustering
     elif algoritmo == 'cab':
         template += 'comparacion.html'
         if request.POST['archivos'] != 'default':

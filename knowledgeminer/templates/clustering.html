@@ -1,0 +1,180 @@
+<style>
+    div.scroll {
+        margin: 4px, 4px;
+        padding: 4px;
+        width: 75%;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    div.scrolly {
+        margin:4px, 4px;
+        padding:4px;
+        width: 75%;
+        height: 400px;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+</style>
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<h1>Bienvenido al modelo de Clustering Particional.</h1>
+<p>El Clustering Particional o el algoritmo particional, organiza los elementos dentro de k clústeres. Además, el algoritmo K-means es uno de los algoritmos utilizados en la industria para crear k clústers a partir de un conjunto de elementos, de tal manera que los elementos de un grupo sean similares.
+</p>
+<p>A continuación se mostrará el modelo de Clustering Particional para el dataset <b>{{file}}</b></p>
+<h3>Paso 1: Acceso a los datos.</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Columna</th>
+            <th>Tipo</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  clustering.get_info.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>Se hace la agrupación de los datos a partir de la columna seleccionada:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Tipo</th>
+            <th>Resultados</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  clustering.get_datos.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>Se elimina de los datos la columna antes agrupada:</p>
+<div class="scroll">
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <tr>
+            {% for col in clustering.get_nuvDatos.columns %}
+                <th>
+                {{col}}
+                </th>
+            {% endfor %}
+        </tr>
+            {% for index, row in clustering.get_nuvDatos.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+</div>
+<h3>Paso 2: Selección de características.</h3>
+<p>A continuación, se mostrará la matriz de correlaciones. A partir de esta se podra analizar la relación entre las variables numéricas.</p>
+<img src="data:image/png;base64, {{clustering.get_mCorr}}", alt="", height="500", width="700">
+<a download="clustering_seleccion_caracteristicas.png" href="data:image/png;base64, {{clustering.get_mCorr}}" title="Selección de características">
+<h3>Paso 3: Creación del modelo.</h3>
+<p>Se calculan la media y la desviación, y se escalan los datos.</p>
+<div class="scroll">
+<div class="scrolly">
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <tr>
+            {% for col in clustering.get_mStand.columns %}
+                <th>
+                {{col}}
+                </th>
+            {% endfor %}
+        </tr>
+            {% for index, row in clustering.get_mStand.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+</div>
+</div>
+<p>Se crea la grafica SSE´, de esta manera se podra ver el número de cl codo que servira para conocer el número de clústers.</p>
+<img src="data:image/png;base64, {{clustering.get_sse}}", alt="", height="500", width="700">
+<a download="Elbow_method.png" href="data:image/png;base64, {{clustering.get_sse}}" title="SSE">
+<p>A partir de la grafcia anterior es posibe observar que el número de clústers que se tendrán son:</p>
+{{clustering.get_numK}}
+<p>Pasamos a crear las etiquetas de los elementos de los clusters:</p>
+{{clustering.get_mPart}}
+<p>Se puede ver de mejor manera añadiendo una columna a los datos donde se pueda observar el cluster al que pertenecen:</p>
+<div class="scroll">
+<div class="scrolly">
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <tr>
+            {% for col in clustering.get_clustP.columns %}
+                <th>
+                {{col}}
+                </th>
+            {% endfor %}
+        </tr>
+            {% for index, row in clustering.get_clustP.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+</div>
+</div>
+<p>Se puede apreciar mejor la cantidad de elementos en cada grupo en la siguiente lista:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Cluster</th>
+            <th>Elementos</th>
+        </tr>
+    </thead>
+    <tbody>
+{% for index, item in  clustering.get_numElem.items %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{item}}</td>
+        </tr>
+{% endfor %}
+    </tbody>
+</table>
+<p>Teniendo ya los clústers, se pueden obtener sus respectivos centroides. Estos se pueden observar a continuación.</p>
+<div class="scroll">
+    <table class="table" cellpadding=10 cellspacing=0 >
+        <tr>
+            {% for col in clustering.get_centros.columns %}
+                <th>
+                {{col}}
+                </th>
+            {% endfor %}
+        </tr>
+            {% for index, row in clustering.get_centros.iterrows %}
+                <tr>
+                {% for cell in row %}
+                    <td>
+                    {{cell}}
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+    </table>
+</div>
+<p>A continuación, se mostrará una grafica 3D donde se pueden observar como se encuentran repartidos los clústers y sus centros.</p>
+<img src="data:image/png;base64, {{clustering.get_clusters}}", alt="", height="500", width="700">
+<a download="clusters_centroides.png" href="data:image/png;base64, {{clustering.get_clusters}}" title="Elementos y centros">
