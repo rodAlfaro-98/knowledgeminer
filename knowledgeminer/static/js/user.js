@@ -36,7 +36,7 @@ function getCargas(){
         for(var c = 0, m = table.rows[r].cells.length; c < m; c++){
             if(table.rows[r].cells[c].innerHTML >= (porcentaje/100)){
                 table.rows[r].cells[c].style.backgroundColor  = "#D6EEEE";
-                columnas.add(table.rows[0].cells[c].innerHTML);
+                columnas.add(table.rows[0].cells[c].innerHTML.trim());
             }else{
                 table.rows[r].cells[c].style.backgroundColor  = "#FFFFFF";
             }
@@ -52,6 +52,22 @@ function getCargas(){
         document.getElementById('valores_cargas').innerHTML = '';
     }
 
+}
+
+function getColumna(){
+    var columna = document.getElementById("columnas_manual").value;
+    if(columna != 'default'){
+        columnas.add(columna); 
+    }
+    if(columnas.size > 0){
+        document.getElementById('cargas_header').style.display='block';
+        document.getElementById('span_cargas').innerHTML = 'Las columnas con cargas importantes son:';
+        columnas_array = Array.from(columnas)
+        document.getElementById('valores_cargas').innerHTML = columnas_array.toString();
+    }else{
+        document.getElementById('span_cargas').innerHTML = 'No se cuentan con columnas que cumplan con el porcentaje seleccionado';
+        document.getElementById('valores_cargas').innerHTML = '';
+    }
 }
 
 function getURLCargas(){

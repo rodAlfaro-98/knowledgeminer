@@ -133,22 +133,25 @@ def register_request(request):
         return render (request=request, template_name="register.html", context={"register_form":form})
 
 def login_request(request):
-	if request.method == "POST":
-		form = AuthenticationForm(request, data=request.POST)
-		if form.is_valid():
-			username = form.cleaned_data.get('username')
-			password = form.cleaned_data.get('password')
-			user = authenticate(username=username, password=password)
-			if user is not None:
-				login(request, user)
-				messages.info(request, f"You are now logged in as {username}.")
-				return redirect("knowledgeminer:index")
-			else:
-				messages.error(request,"Invalid username or password.")
-		else:
-			messages.error(request,"Invalid username or password.")
-	form = AuthenticationForm()
-	return render(request=request, template_name="login.html", context={"login_form":form})
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        print('Entrando a form')
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                print('Login valido')
+                login(request, user)
+                messages.info(request, f"You are now logged in as {username}.")
+                return redirect("knowledgeminer:index")
+            else:
+                print('Login no valido')
+                messages.info(request,"Invalid username or password.")
+        else:
+            messages.info(request,"Invalid username or password.")
+    form = AuthenticationForm()
+    return render(request=request, template_name="login.html", context={"login_form":form})
 
 def index(request):
     if request.user.is_authenticated:
@@ -316,7 +319,7 @@ def seleccion_pdf(request):
         template +='ad.html'
         if request.POST['archivos'] != 'default':
             var_dep = request.POST[request.POST['archivos']]
-            ad = AD.initialization(file,var_dep)
+            ad = AD.initialization(file,var_dep,request)
             data['ad'] = ad
     elif algoritmo == 'ba':
         template +='ba.html'
@@ -334,7 +337,7 @@ def seleccion_pdf(request):
         template += 'comparacion.html'
         if request.POST['archivos'] != 'default':
             var_dep = request.POST[request.POST['archivos']]
-            ad = AD.initialization(file,var_dep)
+            ad = AD.initialization(file,var_dep,request)
             ba = BA.initialization(file,var_dep,request)
             validacion = Validacion.initialization(ad,ba,var_dep)
             data['validacion'] = validacion

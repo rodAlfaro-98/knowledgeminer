@@ -100,6 +100,7 @@ def cargas(dataset):
 def initialization(file_path):
 	dataset = pd.read_csv(file_path)
 	dataset = dataset.iloc[0:500000]
+	dataset = dataset.dropna()
 	dataset = dataset.select_dtypes(include=['float64','int64'])
 	paso1 = varCorrelacionadas(dataset)
 	paso2 = estandarizacionDatos(dataset)
