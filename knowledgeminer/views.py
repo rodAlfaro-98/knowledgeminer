@@ -60,8 +60,10 @@ def eda_prueba(request):
     return render(request = request, template_name='eda.html', context = context)
 
 def ba_prueba(request):
+    if request.POST:
+        print('Fue post')
     file_name = request.session['archivo']
-    ba = BA.initialization(file_name,request.session['var_dep'])
+    ba = BA.initialization(file_name,request.session['var_dep'],request)
     file = file_name.split('/')[len(file_name.split('/'))-1]
     context = {
         'ba': ba,
@@ -92,7 +94,7 @@ def comparacion(request):
     file_name = request.session['archivo']
     file = file_name.split('/')[len(file_name.split('/'))-1]
     ad = AD.initialization(file_name,request.session['var_dep'])
-    ba = BA.initialization(file_name,request.session['var_dep'])
+    ba = BA.initialization(file_name,request.session['var_dep'],request)
     validacion = Validacion.initialization(ad,ba,request.session['var_dep'])
     context = {
         'validacion':validacion,
@@ -302,14 +304,14 @@ def seleccion_pdf(request):
         template +='ba.html'
         if request.POST['archivos'] != 'default':
             var_dep = request.POST[request.POST['archivos']]
-            ba = BA.initialization(file,var_dep)
+            ba = BA.initialization(file,var_dep,request)
             data['ba'] = ba
     elif algoritmo == 'cab':
         template += 'comparacion.html'
         if request.POST['archivos'] != 'default':
             var_dep = request.POST[request.POST['archivos']]
             ad = AD.initialization(file,var_dep)
-            ba = BA.initialization(file,var_dep)
+            ba = BA.initialization(file,var_dep,request)
             validacion = Validacion.initialization(ad,ba,var_dep)
             data['validacion'] = validacion
             data['ad'] = ad

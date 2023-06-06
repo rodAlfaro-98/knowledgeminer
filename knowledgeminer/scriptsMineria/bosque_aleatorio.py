@@ -11,12 +11,15 @@ import io
 import urllib, base64
 
 class BA():
-    def __init__(self,X_train, X_validation, Y_train, Y_validation,dataset,dependiente,X):
+    def __init__(self,X_train, X_validation, Y_train, Y_validation,dataset,dependiente,X, default=True,n_estimators = None, max_depth = None, min_samples_split=None, min_samples_leaf = None):
         self.X_train = X_train
         self.X_validation = X_validation
         self.Y_train = Y_train
         self.Y_validation = Y_validation
-        self.arbol = RandomForestClassifier(random_state = 0)
+        if default:
+            self.arbol = RandomForestClassifier(random_state = 0)
+        else:
+            self.arbol = RandomForestClassifier(random_state = 0, n_estimators= n_estimators, max_depth= max_depth, min_samples_split= min_samples_split, min_samples_leaf=min_samples_leaf)
         self.dataset = dataset
         self.dependiente = dependiente
         self.X = X
@@ -108,9 +111,17 @@ def train_validation(x,y):
                                                                                 shuffle = True)
     return [X_train, X_validation, Y_train, Y_validation]
 
-def initialization(file_path,dependiente):
+def initialization(file_path,dependiente,request):
     dataset = pd.read_csv(file_path)
     dataset = dataset.iloc[0:500000]
     x,y,columnas = separacion(dataset,dependiente)
     X_train, X_validation, Y_train, Y_validation = train_validation(x,y)
-    return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas)
+    if request.POST:
+        print('Es post')
+        n_estimadores = request.POST['n_estimators'] if request.POST['n_estimators'] > 0 else None
+        max_depth = request.POST['max_depth'] if request.POST['max_depth'] > 0 else None
+        min_samples_split = request.POST['min_samples_split'] if request.POST['min_samples_split'] > 0 else None
+        min_samples_leaf = request.POST['min_samples_leaf'] if request.POST['min_samples_leaf'] > 0 else None
+        return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas, False, n_estimators=n_estimadores,max_depth=max_depth,min_samples_split=min_samples_split,min_samples_leaf=min_samples_leaf)
+    else:
+        return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas)
