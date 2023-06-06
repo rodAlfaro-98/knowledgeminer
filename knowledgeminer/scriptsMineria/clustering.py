@@ -55,19 +55,45 @@ class CLUSTERING():
 
 
 def accesoDatos(dataset,dependiente):
+	buffer = io.StringIO()
+	dataset.info(buf=buffer)
+	lines = buffer.getvalue().splitlines()[5:-2]
+	info = [x.split(' ') for x in lines]
+	info_new = []
+	for i in info:
+		line = []
+		for j in i:
+			if len(j) >= 1:
+				line.append(j)
+		info_new.append(line)
+	first_info = []
+	for i in info_new:
+		line = []
+		line.append(i[0]) #index
+        #Find non-null
+		non_null_index = i.index('non-null')
+		non_null_index_minus = non_null_index-1
+		string = ''
+		for j in i[1:non_null_index_minus]:
+			string+=j+' '
+		line.append(string)
+		line.append(i[non_null_index_minus]+' '+i[non_null_index])
+		line.append(i[non_null_index+1])
+		first_info.append(line)
 	paso1 = {
-		'info': dataset.dtypes,
+		'info': first_info,
 		'datos': dataset.groupby(dependiente).size(),
-		'nuvDatos': dataset.drop([dependiente], axis = 1, inplace = True)
 	}
+	dataset.drop([dependiente], axis = 1, inplace = True)
+	paso1['nuvDatos'] = dataset
 	return paso1
 
 def selCaract(dataset):
 	plt.clf()
-	Matriz = np.triu(dataset.corr(method = 'pearson'))
-	sns.heatmap(dataset.corr(), cmap='RdBu_r', annot=True, mask=Matriz)
+	MatrizInf = np.triu(dataset.corr())
+	sns.heatmap(dataset.corr(), cmap='RdBu_r', annot=True, mask=MatrizInf)
 	buf = io.BytesIO()
-	plt.savefig(buf,format='png')
+	plt.savefig(buf, format='png')
 	buf.seek(0)
 	string = base64.b64encode(buf.read())
 	uri = urllib.parse.quote(string)
@@ -83,9 +109,9 @@ def segParticional(dataset):
 	#Definición de K clusters
 	SSE = []
 	for i in range(2, 10):
-	    km = KMeans(n_clusters=i, random_state=0)
-	    km.fit(MEstandarizada)
-	    SSE.append(km.inertia_)
+		km = KMeans(n_clusters=i, random_state=0)
+		km.fit(MEstandarizada)
+		SSE.append(km.inertia_)
 	#Grafica SSE
 	plt.clf()
 	plt.figure(figsize=(10,7))
@@ -115,16 +141,16 @@ def segParticional(dataset):
 	colores=['red', 'blue', 'green', 'yellow']
 	asignar=[]
 	for row in MParticional.labels_:
-	    asignar.append(colores[row])
+		asignar.append(colores[row])
 
 	fig = plt.figure()
 	ax = plt.axes(projection = "3d")
 	ax.scatter3D(MEstandarizada[:, 0], 
-           MEstandarizada[:, 1], 
-           MEstandarizada[:, 2], marker='o', c=asignar, s=60)
+    MEstandarizada[:, 1], 
+    MEstandarizada[:, 2], marker='o', c=asignar, s=60)
 	ax.scatter3D(MParticional.cluster_centers_[:, 0], 
-           MParticional.cluster_centers_[:, 1], 
-           MParticional.cluster_centers_[:, 2], marker='o', c=colores, s=1000)
+    MParticional.cluster_centers_[:, 1], 
+    MParticional.cluster_centers_[:, 2], marker='o', c=colores, s=1000)
 	buf = io.BytesIO()
 	plt.savefig(buf,format='png')
 	buf.seek(0)
@@ -141,11 +167,13 @@ def segParticional(dataset):
 		'centros': CentroidesP,
 		'clusters': uri1,
 	}
+	return paso3
 
 def initialization(file_path,dependiente):
 	dataset = pd.read_csv(file_path)
-	dataset = dataset.iloc[0:500000]
+	dataset = dataset
 	paso1 = accesoDatos(dataset,dependiente)
 	paso2 = selCaract(dataset)
 	paso3 = segParticional(dataset)
 	clustering = CLUSTERING(dataset,paso1,paso2,paso3)
+	return clustering

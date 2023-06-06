@@ -116,12 +116,12 @@ def initialization(file_path,dependiente,request):
     dataset = dataset.iloc[0:500000]
     x,y,columnas = separacion(dataset,dependiente)
     X_train, X_validation, Y_train, Y_validation = train_validation(x,y)
-    if request.POST:
+    if 'csrfmiddlewaretoken' in request.GET:
         print('Es post')
-        n_estimadores = request.POST['n_estimators'] if request.POST['n_estimators'] > 0 else None
-        max_depth = request.POST['max_depth'] if request.POST['max_depth'] > 0 else None
-        min_samples_split = request.POST['min_samples_split'] if request.POST['min_samples_split'] > 0 else None
-        min_samples_leaf = request.POST['min_samples_leaf'] if request.POST['min_samples_leaf'] > 0 else None
+        n_estimadores = int(request.GET['n_estimators']) if int(request.GET['n_estimators']) > 0 else None
+        max_depth = int(request.GET['max_depth']) if int(request.GET['max_depth']) > 0 else None
+        min_samples_split = int(request.GET['min_samples_split']) if int(request.GET['min_samples_split']) > 0 else None
+        min_samples_leaf = int(request.GET['min_samples_leaf']) if int(request.GET['min_samples_leaf']) > 0 else None
         return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas, False, n_estimators=n_estimadores,max_depth=max_depth,min_samples_split=min_samples_split,min_samples_leaf=min_samples_leaf)
     else:
         return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas)
