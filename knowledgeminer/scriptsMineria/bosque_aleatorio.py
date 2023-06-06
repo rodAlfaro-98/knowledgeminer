@@ -11,7 +11,7 @@ import io
 import urllib, base64
 
 class BA():
-    def __init__(self,X_train, X_validation, Y_train, Y_validation,dataset,dependiente,X, default=True,n_estimators = None, max_depth = None, min_samples_split=None, min_samples_leaf = None):
+    def __init__(self,X_train, X_validation, Y_train, Y_validation,dataset,dependiente,X, default=True,n_estimators = None, max_depth = None, min_samples_split=2, min_samples_leaf = 1):
         self.X_train = X_train
         self.X_validation = X_validation
         self.Y_train = Y_train
@@ -118,10 +118,10 @@ def initialization(file_path,dependiente,request):
     X_train, X_validation, Y_train, Y_validation = train_validation(x,y)
     if 'csrfmiddlewaretoken' in request.GET:
         print('Es post')
-        n_estimadores = int(request.GET['n_estimators']) if int(request.GET['n_estimators']) > 0 else None
-        max_depth = int(request.GET['max_depth']) if int(request.GET['max_depth']) > 0 else None
-        min_samples_split = int(request.GET['min_samples_split']) if int(request.GET['min_samples_split']) > 0 else None
-        min_samples_leaf = int(request.GET['min_samples_leaf']) if int(request.GET['min_samples_leaf']) > 0 else None
+        n_estimadores = int(request.GET['n_estimators_f']) if int(request.GET['n_estimators_f']) > 0 else None
+        max_depth = int(request.GET['max_depth_f']) if int(request.GET['max_depth_f']) > 0 else None
+        min_samples_split = int(request.GET['min_samples_split_f']) if int(request.GET['min_samples_split_f']) > 2 else 2
+        min_samples_leaf = int(request.GET['min_samples_leaf_f']) if int(request.GET['min_samples_leaf_f']) > 1 else 1
         return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas, False, n_estimators=n_estimadores,max_depth=max_depth,min_samples_split=min_samples_split,min_samples_leaf=min_samples_leaf)
     else:
         return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas)

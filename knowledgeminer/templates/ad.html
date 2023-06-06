@@ -220,5 +220,17 @@
     <button class="btn btn-primary">Descargar imagen</button>
 </a>
 <p>&nbsp</p>
-
+<form mehtod="post" action="{% url 'knowledgeminer:ad' %}">
+    {% csrf_token %}
+    <label for="max_depth">Profundidad máxima del árbol (2-20)</label>
+    <input type="number" id="max_depth" name="max_depth" min="2" max="20" value="0">
+    <br>
+    <label for="min_samples_split">Número mínimo de elementos por nodo decisión (2-10)</label>
+    <input type="number" id="min_samples_split" name="min_samples_split" min="2" max="10" value="0">
+    <br>
+    <label for="min_samples_leaf">Número mínimo de elementos por nodo hoja (1-5)</label>
+    <input type="number" id="min_samples_leaf" name="min_samples_leaf" min="1" max="5" value="0">
+    <br>
+    <button type="submit" class="btn btn-primary">Recalcular</button>
+</form>
 {% endblock content %}

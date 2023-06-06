@@ -154,16 +154,16 @@ def creacionMod(dataset):
 	}
 	return paso4
 
-def modeloAd(dataset):
+def modeloAd(dataset,max_depth,min_samples_split,min_samples_leaf):
 	global ClasificacionAD
 	global Y_ClasificacionAD
 
 	#Se entrena el modelo a partir de los datos de entrada
 	#ClasificacionAD = DecisionTreeClassifier(random_state=0)
 	#ClasificacionAD.fit(X_train, Y_train)
-	ClasificacionAD = DecisionTreeClassifier(max_depth=14, 
-                                         min_samples_split=4, 
-                                         min_samples_leaf=2,
+	ClasificacionAD = DecisionTreeClassifier(max_depth=max_depth, 
+                                         min_samples_split=min_samples_split, 
+                                         min_samples_leaf=min_samples_leaf,
                                          random_state=0)
 	z = ClasificacionAD.fit(X_train, Y_train)
 
@@ -220,15 +220,22 @@ def eficonfMod(dataset,dependiente):
 	}
 	return paso7
 
-def initialization(file_path,dependiente):
-    dataset = pd.read_csv(file_path)
-    dataset = dataset.iloc[0:500000]
-    paso1 = accesoDatos(dataset,dependiente)
-    paso2 = selCaracteristcas(dataset)
-    paso3 = definicionVar(dataset,dependiente)
-    paso4 = creacionMod(dataset)
-    paso5 = modeloAd(dataset)
-    paso6 = matrizClasificacion(dataset)
-    paso7 = eficonfMod(dataset,dependiente)
-    ad = AD(dataset,paso1,paso2,paso3,paso4,paso5,paso6,paso7)
-    return ad
+def initialization(file_path,dependiente,request):
+	dataset = pd.read_csv(file_path)
+	dataset = dataset.iloc[0:500000]
+	paso1 = accesoDatos(dataset,dependiente)
+	paso2 = selCaracteristcas(dataset)
+	paso3 = definicionVar(dataset,dependiente)
+	paso4 = creacionMod(dataset)
+	max_depth = None
+	min_samples_leaf = 1
+	min_samples_split = 2
+	if 'csrfmiddlewaretoken' in request.GET:
+		max_depth = int(request.GET['max_depth']) if int(request.GET['max_depth']) > 0 else None
+		min_samples_split = int(request.GET['min_samples_split']) if int(request.GET['min_samples_split']) > 2 else 2
+		min_samples_leaf = int(request.GET['min_samples_leaf']) if int(request.GET['min_samples_leaf']) > 1 else 1
+	paso5 = modeloAd(dataset,max_depth,min_samples_split,min_samples_leaf)
+	paso6 = matrizClasificacion(dataset)
+	paso7 = eficonfMod(dataset,dependiente)
+	ad = AD(dataset,paso1,paso2,paso3,paso4,paso5,paso6,paso7)
+	return ad

@@ -391,4 +391,34 @@
     <button class="btn btn-primary">Descargar imagen</button>
 </a>
 {% endfor %}
+
+<form mehtod="post" action="{% url 'knowledgeminer:cab' %}">
+    {% csrf_token %}
+    <h3>Parámetros de bosque aleatorio</h3>
+    <label for="n_estimators_f">Numero de árboles (2-200)</label>
+    <input type="number" id="n_estimators_f" name="n_estimators_f" min="2" max="200" value="0">
+    <br>
+    <label for="max_depth_f">Profundidad máxima del árbol (2-20)</label>
+    <input type="number" id="max_depth_f" name="max_depth_f" min="2" max="20" value="0">
+    <br>
+    <label for="min_samples_split_f">Número mínimo de elementos por nodo decisión (2-10)</label>
+    <input type="number" id="min_samples_split_f" name="min_samples_split_f" min="2" max="10" value="0">
+    <br>
+    <label for="min_samples_leaf_f">Número mínimo de elementos por nodo hoja (1-5)</label>
+    <input type="number" id="min_samples_leaf_f" name="min_samples_leaf_f" min="1" max="5" value="0">
+    <br>
+    <br>
+    <br>
+    <h3>Parámetros del árbol de decisión</h3>
+    <label for="max_depth">Profundidad máxima del árbol (2-20)</label>
+    <input type="number" id="max_depth" name="max_depth" min="2" max="20" value="0">
+    <br>
+    <label for="min_samples_split">Número mínimo de elementos por nodo decisión (2-10)</label>
+    <input type="number" id="min_samples_split" name="min_samples_split" min="2" max="10" value="0">
+    <br>
+    <label for="min_samples_leaf">Número mínimo de elementos por nodo hoja (1-5)</label>
+    <input type="number" id="min_samples_leaf" name="min_samples_leaf" min="1" max="5" value="0">
+    <br>
+    <button type="submit" class="btn btn-primary">Recalcular</button>
+</form>
 {% endblock content %}

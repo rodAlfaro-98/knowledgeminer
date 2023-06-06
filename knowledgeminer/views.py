@@ -84,7 +84,7 @@ def pca_prueba(request):
 def ad_prueba(request):
     file_name = request.session['archivo']
     file = file_name.split('/')[len(file_name.split('/'))-1]
-    ad = AD.initialization(file_name,request.session['var_dep'])
+    ad = AD.initialization(file_name,request.session['var_dep'],request)
     context = {
         'ad': ad,
         'file': file,
@@ -104,7 +104,7 @@ def clustering_prueba(request):
 def comparacion(request):
     file_name = request.session['archivo']
     file = file_name.split('/')[len(file_name.split('/'))-1]
-    ad = AD.initialization(file_name,request.session['var_dep'])
+    ad = AD.initialization(file_name,request.session['var_dep'],request)
     ba = BA.initialization(file_name,request.session['var_dep'],request)
     validacion = Validacion.initialization(ad,ba,request.session['var_dep'])
     context = {
@@ -236,8 +236,10 @@ def exportar(request):
         return render(request=request, template_name="login.html", context={"login_form":form})
     
 def exportar_pca(request,columnas,porcentaje):
-    columns = [i[16:] for i in columnas.replace('\"','').split(',')]
-    columns = [i[:-16] if i[len(i)-1] == ' ' else i for i in columns]
+    columns = [i for i in columnas.replace('\"','').split(',')]
+    columns = [i for i in columns]
+    print(columns)
+    print('\n\n')
     context = {
         'var':columns
     }
@@ -326,7 +328,7 @@ def seleccion_pdf(request):
         template += 'clustering.html'
         if request.POST['archivos'] != 'default':
             var_dep = request.POST[request.POST['archivos']]
-            clustering = CLUSTERING.initialization(file,var_dep)
+            clustering =  kmean.initialization(file,var_dep)
             data['clustering'] = clustering
     elif algoritmo == 'cab':
         template += 'comparacion.html'

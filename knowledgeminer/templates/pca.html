@@ -113,6 +113,15 @@
         {% endfor %}
     {% endwith %}
 </select>
+<h5>Desea agregar una columna manualmente</h5>
+<select name="columnas_manual" id="columnas_manual" onchange="getColumna()">
+    <option value="default">Seleccione columna</option>
+    {% for col in pca.get_cargasCom.columns %}
+        <option value="{{col}}">{{col}}</option>
+    {% endfor %}
+</select>
+<br>
+<br>
 <h5 id="cargas_header" style="display: none;"><span id='span_cargas'></span> <span id='valores_cargas'></span></h5>
 <button type="button" class="btn btn-primary" onclick = "getURLCargas()">Exportar varaibles de PCA</button>
 {% endblock content %}
