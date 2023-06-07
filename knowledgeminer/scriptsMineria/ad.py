@@ -23,6 +23,22 @@ class AD():
 		self.paso5 = paso5
 		self.paso6 = paso6
 		self.paso7 = paso7
+		self.new_registro = False
+
+	def add_new_registro(self):
+		self.new_registro = True
+	
+	def is_new_registro(self):
+		return self.new_registro
+	
+	def set_new_data(self,data):
+		self.new_data = data
+	
+	def predict_new(self):
+		return self.paso5['arbol'].predict(self.new_data)
+	
+	def get_new_data(self):
+		return self.new_data
 
 	def get_datos(self):
 		return self.paso1['datos']
@@ -95,6 +111,9 @@ class AD():
 	
 	def get_Y_validation(self):
 		return Y_validation
+	
+	def get_columnas(self):
+		return self.paso7['columnas']
 
 def accesoDatos(dataset,dependiente):
 	dat = dataset.groupby(dependiente).size()
@@ -217,6 +236,7 @@ def eficonfMod(dataset,dependiente):
 		'impMod': ImportanciaMod1,
 		'arbol': uri1,
 		'rep': Reporte,
+		'columnas': columnas
 	}
 	return paso7
 
@@ -238,4 +258,13 @@ def initialization(file_path,dependiente,request):
 	paso6 = matrizClasificacion(dataset)
 	paso7 = eficonfMod(dataset,dependiente)
 	ad = AD(dataset,paso1,paso2,paso3,paso4,paso5,paso6,paso7)
+
+	if 'nuevo_registro' in request.GET:
+		if request.GET['nuevo_registro'] == '1':
+			data = {}
+			for i in range(len(ad.get_columnas())):
+				data[i] = [float(request.GET[ad.get_columnas()[i]])]
+			ad.add_new_registro()
+			ad.set_new_data(pd.DataFrame(data))
+
 	return ad

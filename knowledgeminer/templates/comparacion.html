@@ -219,6 +219,31 @@
     <button class="btn btn-primary">Descargar imagen</button>
 </a>
 <p>&nbsp</p>
+{% if ad.is_new_registro %}
+<hr>
+<h3>Predicción con datos ingresados por el usuario</h3>
+<h5>Con los datos:</h5>
+<table class="table">
+    <tr>
+        {% for col in ad.get_columnas %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in ad.get_new_data.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<h5>Obtenemos la clase</h5>
+<p><b>{{ad.predict_new.0}}</b></p>
+{% endif %}
 <hr>
 <h1><b>Bosques Aleatorios</b></h1>
 <h3>Análisis previo</h3>
@@ -379,6 +404,32 @@
         {% endfor %}
 </table>
 <hr>
+{% if ba.is_new_registro %}
+<hr>
+<h3>Predicción con datos ingresados por el usuario</h3>
+<h5>Con los datos:</h5>
+<table class="table">
+    <tr>
+        {% for col in ba.get_indep_vars.1.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in ba.get_new_data.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<h5>Obtenemos la clase</h5>
+<p><b>{{ba.predict_new.0}}</b></p>
+{% endif %}
+<hr>
 <h1><b>Validación (Rendimiento)</b></h1>
 <h3>Valores de exactitud</h3>
 <p>Árbol de decisión: {{validacion.get_accuracies.0}}</p>
@@ -418,6 +469,18 @@
     <br>
     <label for="min_samples_leaf">Número mínimo de elementos por nodo hoja (1-5)</label>
     <input type="number" id="min_samples_leaf" name="min_samples_leaf" min="1" max="5" value="0">
+    <br>
+    <h3>Desea agregar un nuevo registro?</h3>
+    <select id="nuevo_registro" name="nuevo_registro" onchange="setNewRegistro()">
+        <option value="1">Sí</option>
+        <option value="0" selected>No</option>
+    </select>
+    <div id="new_registry" style="display:none">
+        <h5>Ingrese datos para tratar de calcular la etiqueta del registro</h5>
+        {% for col in ad.get_columnas %}
+            <label for="{{col}}">{{col}}</label><input type="number" step="0.00001" id="{{col}}" name="{{col}}">
+        {% endfor %}
+    </div>
     <br>
     <button type="submit" class="btn btn-primary">Recalcular</button>
 </form>
