@@ -12,11 +12,13 @@ from kneed import KneeLocator
 from mpl_toolkits.mplot3d import Axes3D
 
 class CLUSTERING():
-	def __init__(self,dataset,paso1,paso2,paso3):
+	def __init__(self,dataset,paso1,paso2,paso3,columnas):
 		self.dataset = dataset
 		self.paso1 = paso1
 		self.paso2 = paso2
 		self.paso3 = paso3
+		self.columnas = columnas
+		self.new_registro = False
 
 	def get_info(self):
 		return self.paso1['info']
@@ -52,7 +54,24 @@ class CLUSTERING():
 
 	def get_clusters(self):
 		return self.paso3['clusters']
-
+	
+	def add_new_registro(self):
+		self.new_registro = True
+	
+	def is_new_registro(self):
+		return self.new_registro
+	
+	def set_new_data(self,data):
+		self.new_data = data
+	
+	def predict_new(self):
+		return self.paso3['kmeans'].predict(self.new_data)
+	
+	def get_new_data(self):
+		return self.new_data
+	
+	def get_columnas(self):
+		return self.columnas
 
 def accesoDatos(dataset,dependiente):
 	buffer = io.StringIO()
@@ -166,14 +185,24 @@ def segParticional(dataset):
 		'numElem':dataset.groupby(['clusterP'])['clusterP'].count(),
 		'centros': CentroidesP,
 		'clusters': uri1,
+		'kmeans':MParticional,
 	}
 	return paso3
 
-def initialization(file_path,dependiente):
+def initialization(file_path,dependiente,request):
 	dataset = pd.read_csv(file_path)
 	dataset = dataset
+	columnas = dataset.columns.tolist()
+	columnas.remove(dependiente)
 	paso1 = accesoDatos(dataset,dependiente)
 	paso2 = selCaract(dataset)
 	paso3 = segParticional(dataset)
-	clustering = CLUSTERING(dataset,paso1,paso2,paso3)
+	clustering = CLUSTERING(dataset,paso1,paso2,paso3,columnas=columnas)
+	if 'nuevo_registro' in request.GET:
+		if request.GET['nuevo_registro'] == '1':
+			data = {}
+			for i in range(len(columnas)):
+				data[i] = [float(request.GET[columnas[i]])]
+			clustering.add_new_registro()
+			clustering.set_new_data(pd.DataFrame(data))
 	return clustering

@@ -187,5 +187,44 @@
 <a download="clustering_centroide.png" href="data:image/png;base64, {{clustering.get_clusters}}" title="SSE">
     <button class="btn btn-primary">Descargar imagen</button>
 </a>
-
+{% if clustering.is_new_registro %}
+<hr>
+<h3>Predicción con datos ingresados por el usuario</h3>
+<h5>Con los datos:</h5>
+<table class="table">
+    <tr>
+        {% for col in clustering.get_columnas %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in clustering.get_new_data.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<h5>Obtenemos la clase</h5>
+<p><b>{{clustering.predict_new.0}}</b></p>
+{% endif %}
+<form mehtod="post" action="{% url 'knowledgeminer:clustering' %}">
+<h3>Desea agregar un nuevo registro?</h3>
+<select id="nuevo_registro" name="nuevo_registro" onchange="setNewRegistro()">
+    <option value="0" selected>No</option>
+    <option value="1">Sí</option>
+</select>
+<div id="new_registry" style="display:none">
+    <h5>Ingrese datos para tratar de calcular la etiqueta del registro</h5>
+    {% for col in clustering.get_columnas %}
+        <label for="{{col}}">{{col}}</label><input type="number" step="0.00001" id="{{col}}" name="{{col}}">
+    {% endfor %}
+</div>
+<br>
+<button type="submit" class="btn btn-primary">Obtener</button>
+</form>
 {% endblock content %}

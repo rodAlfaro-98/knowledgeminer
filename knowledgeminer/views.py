@@ -93,7 +93,7 @@ def ad_prueba(request):
 def clustering_prueba(request):
     file_name = request.session['archivo']
     file = file_name.split('/')[len(file_name.split('/'))-1]
-    clustering = kmean.initialization(file_name,request.session['var_dep'])
+    clustering = kmean.initialization(file_name,request.session['var_dep'],request)
     context = {
         'clustering': clustering,
         'file': file,
@@ -330,7 +330,7 @@ def seleccion_pdf(request):
         template += 'clustering.html'
         if request.POST['archivos'] != 'default':
             var_dep = request.POST[request.POST['archivos']]
-            clustering =  kmean.initialization(file,var_dep)
+            clustering =  kmean.initialization(file,var_dep,request)
             data['clustering'] = clustering
     elif algoritmo == 'cab':
         template += 'comparacion.html'
