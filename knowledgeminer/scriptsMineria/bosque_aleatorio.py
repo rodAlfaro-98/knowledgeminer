@@ -24,6 +24,8 @@ class BA():
         self.dependiente = dependiente
         self.X = X
         self.dataset = dataset
+        self.new_registro = False
+        self.new_data = {}
 
     def train(self):
         return self.arbol.fit(self.X_train, self.Y_train.ravel())
@@ -31,7 +33,22 @@ class BA():
     def predict(self):
         self.Y_ClasificacionBA = self.arbol.predict(self.X_validation)
         return self.Y_ClasificacionBA
-        
+    
+    def add_new_registro(self):
+        self.new_registro = True
+
+    def is_new_registro(self):
+        return self.new_registro
+
+    def set_new_data(self,data):
+        self.new_data = data
+
+    def predict_new(self):
+        return self.arbol.predict(self.new_data)
+    
+    def get_new_data(self):
+        return self.new_data
+
     def get_accuracy(self):
         return accuracy_score(self.Y_validation, self.Y_ClasificacionBA)
 
@@ -116,12 +133,22 @@ def initialization(file_path,dependiente,request):
     dataset = dataset.iloc[0:500000]
     x,y,columnas = separacion(dataset,dependiente)
     X_train, X_validation, Y_train, Y_validation = train_validation(x,y)
+
     if 'csrfmiddlewaretoken' in request.GET:
-        print('Es post')
         n_estimadores = int(request.GET['n_estimators_f']) if int(request.GET['n_estimators_f']) > 0 else None
         max_depth = int(request.GET['max_depth_f']) if int(request.GET['max_depth_f']) > 0 else None
         min_samples_split = int(request.GET['min_samples_split_f']) if int(request.GET['min_samples_split_f']) > 2 else 2
         min_samples_leaf = int(request.GET['min_samples_leaf_f']) if int(request.GET['min_samples_leaf_f']) > 1 else 1
-        return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas, False, n_estimators=n_estimadores,max_depth=max_depth,min_samples_split=min_samples_split,min_samples_leaf=min_samples_leaf)
+        ba =  BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas, False, n_estimators=n_estimadores,max_depth=max_depth,min_samples_split=min_samples_split,min_samples_leaf=min_samples_leaf)
     else:
-        return BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas)
+        ba = BA(X_train, X_validation, Y_train, Y_validation,dataset,dependiente,columnas)
+
+    if 'nuevo_registro' in request.GET:
+        if request.GET['nuevo_registro'] == '1':
+            data = {}
+            for i in range(len(columnas)):
+                data[i] = [float(request.GET[columnas[i]])]
+            ba.add_new_registro()
+            ba.set_new_data(pd.DataFrame(data))
+
+    return ba

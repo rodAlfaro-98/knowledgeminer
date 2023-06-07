@@ -15,7 +15,6 @@
         overflow-y: auto;
     }
 </style>
-
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
@@ -66,7 +65,7 @@
             {% endfor %}
     </table>
 </div></div>
-<p>La variable independiente es la siguiente:</p>
+<p>La variable dependiente es la siguiente:</p>
 <ul>
     <li>{{ba.get_dep_vars.0}}</li>
 </ul>
@@ -180,6 +179,32 @@
             </tr>
         {% endfor %}
 </table>
+{% if ba.is_new_registro %}
+<hr>
+<h3>Predicción con datos ingresados por el usuario</h3>
+<h5>Con los datos:</h5>
+<table class="table">
+    <tr>
+        {% for col in ba.get_indep_vars.1.columns %}
+            <td>
+            {{col}}
+            </td>
+        {% endfor %}
+    </tr>
+        {% for index, row in ba.get_new_data.iterrows %}
+            <tr>
+            {% for cell in row %}
+                <td>
+                    {{cell}}
+                </td>
+            {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+<h5>Obtenemos la clase</h5>
+<p><b>{{ba.predict_new.0}}</b></p>
+{% endif %}
+<hr>
 <h3>Si desea repetir el proceso con poda de árboles favor de elegir los siguientes parámetros</h3>
 <form mehtod="post" action="{% url 'knowledgeminer:ba' %}">
     {% csrf_token %}
@@ -195,6 +220,23 @@
     <label for="min_samples_leaf_f">Número mínimo de elementos por nodo hoja (1-5)</label>
     <input type="number" id="min_samples_leaf_f" name="min_samples_leaf_f" min="1" max="5" value="0">
     <br>
-    <button type="submit" class="btn btn-primary">Recalcular</button>
+    <hr>
+    <h3>Desea agregar un nuevo registro?</h3>
+    <select id="nuevo_registro" name="nuevo_registro" onchange="setNewRegistro()">
+        <option value="1">Sí</option>
+        <option value="0" selected>No</option>
+    </select>
+    <div id="new_registry" style="display:none">
+        <h5>Ingrese datos para tratar de calcular la etiqueta del registro</h5>
+        {% for col in ba.get_indep_vars.1.columns %}
+            <label for="{{col}}">{{col}}</label><input type="number" step="0.00001" id="{{col}}" name="{{col}}">
+        {% endfor %}
+    </div>
+    <br>
+    <button type="submit" class="btn btn-primary">Obtener</button>
 </form>
+<br>
+<br>
+<hr>
+<br>
 {% endblock content %}

@@ -73,3 +73,12 @@ function getColumna(){
 function getURLCargas(){
     return window.location.replace('../../knowledgeminer/export/pca/'+columnas_array+'/'+porcentaje.toString());
 }
+
+function setNewRegistro(){
+    var opcion = document.getElementsByName("nuevo_registro")[0].value
+    if(opcion == "1"){
+        document.getElementById('new_registry').style.display = 'block'
+    }else{
+        document.getElementById('new_registry').style.display = 'none'
+    }
+}

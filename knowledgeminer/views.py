@@ -61,14 +61,13 @@ def eda_prueba(request):
     return render(request = request, template_name='eda.html', context = context)
 
 def ba_prueba(request):
-    if request.POST:
-        print('Fue post')
     file_name = request.session['archivo']
     ba = BA.initialization(file_name,request.session['var_dep'],request)
     file = file_name.split('/')[len(file_name.split('/'))-1]
     context = {
         'ba': ba,
         'file': file,
+        'class': -1,
     }
     return render(request = request, template_name='ba.html', context = context)
 def pca_prueba(request):
